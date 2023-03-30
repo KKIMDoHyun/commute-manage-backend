@@ -1,24 +1,21 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { Dayjs } from 'dayjs';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
-import { UpdateCommuteRecordDto } from 'src/commute_records/dto/update-commute_record.dto';
-import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
+import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
+import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 
 @Controller('commute-records')
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
   @Get('/')
-  getAllCommuteRecords(): Promise<CommuteRecord[]> {
+  getAllCommuteRecords(): Promise<CommuteRecordDto[]> {
     return this.commuteRecordsService.getRecentCommuteRecords();
   }
 
-  // @Post('/')
-  // createCommuteRecord(@Body() createCommuteRecordDto: CreateCommuteRecordDto) {
-  //   return this.commuteRecordsService.createCommuteRecord(
-  //     createCommuteRecordDto,
-  //   );
-  // }
+  @Post('/arrive')
+  updateArriveTime() {
+    return this.commuteRecordsService.updateArriveTime();
+  }
 
   // @Get('/:mondayDate')
   // getCommuteRecordsOfWeek(
@@ -26,4 +23,9 @@ export class CommuteRecordsController {
   // ): TCommuteRecord[] {
   //   return this.commuteRecordsService.getCommuteRecordsOfWeek(mondayDate);
   // }
+
+  @Post('/')
+  insertTestRecord(@Body() insertTestRecordDto: InsertTestRecordDto) {
+    return this.commuteRecordsService.insertTestRecord(insertTestRecordDto);
+  }
 }

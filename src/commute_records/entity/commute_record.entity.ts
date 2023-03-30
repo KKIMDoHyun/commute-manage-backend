@@ -17,10 +17,10 @@ export class CommuteRecord extends BaseEntity {
   @Column({ type: 'date' })
   today_date: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', default: null })
   arrive_time: Dayjs;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', default: null })
   leave_time: Dayjs;
 
   @Column({ default: 0 })
