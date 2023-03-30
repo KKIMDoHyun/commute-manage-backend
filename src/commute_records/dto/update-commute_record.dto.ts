@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs';
 
-export class CreateCommuteRecordDto {
+export class UpdateCommuteRecordDto {
   arrive_time: Dayjs;
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Dayjs } from 'dayjs';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
-import { CreateCommuteRecordDto } from 'src/commute_records/dto/create-commute_record.dto';
+import { UpdateCommuteRecordDto } from 'src/commute_records/dto/update-commute_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 
 @Controller('commute-records')

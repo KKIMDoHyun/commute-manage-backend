@@ -1,42 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 import dayjs from 'dayjs';
-import { CreateCommuteRecordDto } from 'src/commute_records/dto/create-commute_record.dto';
+import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
+import { UpdateCommuteRecordDto } from 'src/commute_records/dto/update-commute_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Between, Repository } from 'typeorm';
 import { v1 as uuid } from 'uuid';
 
 @Injectable()
 export class CommuteRecordsService {
-  @InjectRepository(CommuteRecord)
-  private readonly commuteRecordRepository: Repository<CommuteRecord>;
+  constructor(
+    private readonly commuteRecordsRepository: CommuteRecordsRepository,
+  ) {}
 
   /**
    * 최근 7일 간의 기록 가져오기
    */
-  async getRecentCommuteRecords(): Promise<CommuteRecord[]> {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = d.getMonth();
-    const day = d.getDate();
-    const records = this.commuteRecordRepository.find({
-      where: {
-        // created_at: Between(new Date(year, month, day - 7), new Date()),
-        created_at: Between(
-          dayjs().subtract(7, 'd').format(),
-          dayjs().format(),
-        ),
-      },
-    });
-    return records;
+  getRecentCommuteRecords(): Promise<CommuteRecord[]> {
+    return this.commuteRecordsRepository.getRe();
   }
 
   /**
    * 출근하기 기능
    */
-  setArrive(createCommuteRecordDto: CreateCommuteRecordDto) {
-    const { arrive_time } = createCommuteRecordDto;
+  updateArriveTime(updateCommuteRecordDto: UpdateCommuteRecordDto) {
+    const { arrive_time } = updateCommuteRecordDto;
     const record = {
       arrive_time,
     };
