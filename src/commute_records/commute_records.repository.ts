@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
+import { NotFoundError } from 'rxjs';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
-import { Between, EntityRepository, Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 
 @Injectable()
 export class CommuteRecordsRepository extends Repository<CommuteRecord> {
@@ -22,9 +23,18 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return records;
   }
 
-  // 오전 6시에 빈 행이 생성되었다고 가정. created_at과 today_date(YYYY-MM-DD)를 채워.
-  // 출근하기 버튼을 누르면 today_date === dayjs().format('YYYY-MM-DD') 비교 후 지금 도착시간을 arrive_time에 넣어야함
-  async updateArriveTime(): Promise<CommuteRecord[]> {
+  async updateArriveTime(): Promise<boolean> {
+    const findRecord = await this.commuteRecordRepository.findOne({
+      where: {
+        today_date: dayjs().format('YYYY-MM-DD'),
+      },
+      select: ['arrive_time'],
+    });
+
+    if (findRecord) {
+      throw new Error('이미 출근하셨습니다.');
+    }
+
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
@@ -36,8 +46,7 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       })
       .execute();
 
-    const temp = await this.commuteRecordRepository.find();
-    return temp;
+    return true;
   }
 
   async insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {
