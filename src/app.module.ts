@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CommuteRecordsModule } from './commute_records/commute_records.module';
-import * as config from 'config';
+import config from 'config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 const dbConfig = config.get('db');

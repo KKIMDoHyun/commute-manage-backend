@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { CreateCommuteRecordDto } from 'src/commute_records/dto/create-commute_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Between, Repository } from 'typeorm';
@@ -22,7 +22,11 @@ export class CommuteRecordsService {
     const day = d.getDate();
     const records = this.commuteRecordRepository.find({
       where: {
-        created_at: Between(new Date(year, month, day - 7), new Date()),
+        // created_at: Between(new Date(year, month, day - 7), new Date()),
+        created_at: Between(
+          dayjs().subtract(7, 'd').format(),
+          dayjs().format(),
+        ),
       },
     });
     return records;
@@ -31,13 +35,13 @@ export class CommuteRecordsService {
   /**
    * 출근하기 기능
    */
-  // createCommuteRecord(createCommuteRecordDto: CreateCommuteRecordDto) {
-  //   const { arrive_time } = createCommuteRecordDto;
-  //   const record = {
-  //     arrive_time,
-  //   };
-  //   // this.commuteRecords.push(record);
-  // }
+  setArrive(createCommuteRecordDto: CreateCommuteRecordDto) {
+    const { arrive_time } = createCommuteRecordDto;
+    const record = {
+      arrive_time,
+    };
+    // this.commuteRecords.push(record);
+  }
 }
 
 /**
