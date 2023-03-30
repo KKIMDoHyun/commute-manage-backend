@@ -1,0 +1,11 @@
+server:
+  port: 3000
+
+db:
+  type: 'mysql'
+  port: 3306
+  database: 'commute_manage'
+
+jwt:
+  accessToken_expiresIn: 30000
+  refreshToken_expiresIn: 604800

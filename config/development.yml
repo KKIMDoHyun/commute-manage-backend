@@ -1,0 +1,9 @@
+db:
+  host: 'localhost'
+  username: 'root'
+  password: 'rlaehgus1'
+  synchronize: true
+
+jwt:
+  accessToken_secret: 'accesssecret'
+  refreshToken_secret: 'refreshsecret'
