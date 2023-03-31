@@ -25,46 +25,69 @@ export class CommuteRecordsService {
   /**
    * 출근하기 기능
    */
-  updateArriveTime(): Promise<string> {
-    throw new BadRequestException('Something bad happened', {
-      cause: new Error(),
-      description: 'Some error description',
-    });
-    this.commuteRecordsRepository.isAlreadyArrive().then((res) => {
-      if (res) {
-        // throw new HttpException('이미 출근하셨습니다.', HttpStatus.BAD_REQUEST);
-        throw new BadRequestException('Something bad happened', {
-          cause: new Error(),
-          description: 'Some error description',
-        });
-        // throw new HttpException('이미 출근하셨습니다.', Http);
-      }
+  async updateArriveTime(): Promise<string> {
+    try {
+      await this.commuteRecordsRepository.isAlreadyArrive();
       return this.commuteRecordsRepository.updateArriveTime();
-    });
-    // return;
-    // console.log(isAlready);
-    // if (isAlready) {
-    //   /**
-    //    * status: 200
-    //    * message: '이미 출근하셨습니다.'
-    //    */
-    //   throw new NotFoundException('이미 출근하셨습니다.');
-    // }
-    return this.commuteRecordsRepository.updateArriveTime();
+    } catch (err) {
+      if (err.status === 400) {
+        throw new BadRequestException(err.response, {
+          cause: new Error(),
+          description: err.response,
+        });
+      }
+    }
   }
 
   /**
    * 오전 반차 기능
    */
-  // updateAmArriveTime(): Promise<string> {
-  // return this.
-  // }
+  async updateAmArriveTime(): Promise<string> {
+    try {
+      await this.commuteRecordsRepository.isAlreadyArrive();
+      return this.commuteRecordsRepository.updateArriveTime(true);
+    } catch (err) {
+      if (err.status === 400) {
+        throw new BadRequestException(err.response, {
+          cause: new Error(),
+          description: err.response,
+        });
+      }
+    }
+  }
 
   /**
    * 퇴근하기 기능
    */
-  updateLeaveTime(): Promise<string> {
-    return this.commuteRecordsRepository.updateLeaveTime();
+  async updateLeaveTime(): Promise<string> {
+    try {
+      const recentRecord = await this.commuteRecordsRepository.isAlreadyLeave();
+      return this.commuteRecordsRepository.updateLeaveTime(recentRecord);
+    } catch (err) {
+      if (err.status === 400) {
+        throw new BadRequestException(err.response, {
+          cause: new Error(),
+          description: err.response,
+        });
+      }
+    }
+  }
+
+  /**
+   * 오후 반차 기능
+   */
+  async updatePmLeaveTime(): Promise<string> {
+    try {
+      const recentRecord = await this.commuteRecordsRepository.isAlreadyLeave();
+      return this.commuteRecordsRepository.updateLeaveTime(recentRecord, true);
+    } catch (err) {
+      if (err.status === 400) {
+        throw new BadRequestException(err.response, {
+          cause: new Error(),
+          description: err.response,
+        });
+      }
+    }
   }
 
   insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {

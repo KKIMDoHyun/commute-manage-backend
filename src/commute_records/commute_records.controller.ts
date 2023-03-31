@@ -28,15 +28,22 @@ export class CommuteRecordsController {
     return this.commuteRecordsService.updateArriveTime();
   }
 
-  // @Patch('/arrive/am')
-  // @UseFilters(new HttpExceptionFilter())
-  // updateAmArriveTime(): Promise<string> {
-  //   return this.commuteRecordsService.updateAmArriveTime();
-  // }
+  @Patch('/arrive/am')
+  @UseFilters(new HttpExceptionFilter())
+  updateAmArriveTime(): Promise<string> {
+    return this.commuteRecordsService.updateAmArriveTime();
+  }
 
   @Patch('/leave')
+  @UseFilters(new HttpExceptionFilter())
   updateLeaveTime(): Promise<string> {
     return this.commuteRecordsService.updateLeaveTime();
+  }
+
+  @Patch('/leave/pm')
+  @UseFilters(new HttpExceptionFilter())
+  updatePmLeaveTime(): Promise<string> {
+    return this.commuteRecordsService.updatePmLeaveTime();
   }
 
   // @Get('/:mondayDate')

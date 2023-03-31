@@ -1,8 +1,15 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
 import { NotFoundError } from 'rxjs';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
+import { isAlreadyLeaveDto } from 'src/commute_records/dto/get-isAlreadyLeave.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Between, Repository } from 'typeorm';
@@ -24,7 +31,7 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return records;
   }
 
-  async isAlreadyArrive(): Promise<boolean> {
+  async isAlreadyArrive(): Promise<string> {
     const findRecord = await this.commuteRecordRepository.findOne({
       where: {
         today_date: dayjs().format('YYYY-MM-DD'),
@@ -33,42 +40,48 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     });
     // 자동으로 행이 생성 안된 경우
     if (findRecord === undefined) {
-      throw new Error('해당 기록을 찾을 수 없습니다.');
+      throw new HttpException('당일 기록이 없습니다.', HttpStatus.BAD_REQUEST);
     }
     // 이미 출근한 경우
     if (findRecord.arrive_time !== null) {
-      return true;
+      throw new HttpException('이미 출근하였습니다.', HttpStatus.BAD_REQUEST);
     }
     // 출근 기록이 없는 경우
-    return false;
+    return dayjs().format();
   }
 
-  async isAlreadyLeave(): Promise<boolean> {
-    const findRecord = await this.commuteRecordRepository.findOne({
-      where: {
-        today_date: dayjs().format('YYYY-MM-DD'),
+  async isAlreadyLeave(): Promise<CommuteRecord> {
+    const recentRecord = await this.commuteRecordRepository.findOne({
+      order: {
+        created_at: 'DESC',
       },
-      select: ['today_date', 'arrive_time', 'leave_time'],
     });
+
     // 자동으로 행이 생성 안된 경우
-    if (findRecord === undefined) {
+    if (recentRecord === undefined) {
+      throw new HttpException('당일 기록이 없습니다.', HttpStatus.BAD_REQUEST);
     }
     // 출근을 안한 경우
-    if (findRecord.arrive_time === null) {
+    if (recentRecord.arrive_time === null) {
+      throw new HttpException(
+        '출근을 하지 않았습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     // 이미 퇴근한 경우
-    if (findRecord.leave_time === null) {
-      return true;
+    if (recentRecord.leave_time !== null) {
+      throw new HttpException('이미 퇴근하였습니다.', HttpStatus.BAD_REQUEST);
     }
-    return false;
+    return recentRecord;
   }
 
-  async updateArriveTime(): Promise<string> {
+  async updateArriveTime(isAm?: boolean): Promise<string> {
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
       .set({
         arrive_time: dayjs().format(),
+        is_am: isAm ? true : false,
       })
       .where('today_date = :today_date', {
         today_date: dayjs().format('YYYY-MM-DD'),
@@ -77,28 +90,26 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return dayjs().format();
   }
 
-  async updateLeaveTime(): Promise<string> {
-    const findRecord = await this.commuteRecordRepository.findOne({
-      where: {
-        today_date: dayjs().format('YYYY-MM-DD'),
-      },
-      select: ['arrive_time'],
-    });
-
-    if (!findRecord) {
-      throw new Error('출근하지 않았습니다.');
-    }
-
+  async updateLeaveTime(
+    record: CommuteRecord,
+    isPm?: boolean,
+  ): Promise<string> {
+    const { id, arrive_time, is_am } = record;
+    const addAmWorkTime = is_am ? 240 : 0;
+    const addPmWorkTime = isPm ? 240 : 0;
+    console.log(record, isPm, addPmWorkTime);
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
       .set({
         leave_time: dayjs().format(),
-        work_time: dayjs().diff(dayjs(findRecord.arrive_time), 'm'),
+        work_time:
+          dayjs().startOf('m').diff(dayjs(arrive_time).startOf('m'), 'm') +
+          addAmWorkTime +
+          addPmWorkTime,
+        is_pm: isPm ? true : false,
       })
-      .where('today_date = :today_date', {
-        today_date: dayjs().format('YYYY-MM-DD'),
-      })
+      .where('id = :id', { id: id })
       .execute();
 
     return dayjs().format();
