@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { CommuteRecordsModule } from './commute_records/commute_records.module';
 import config from 'config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
+import { APP_FILTER } from '@nestjs/core';
 
 const dbConfig = config.get('db');
 @Module({
@@ -19,6 +21,11 @@ const dbConfig = config.get('db');
     CommuteRecordsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

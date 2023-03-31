@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Patch,
+  Post,
+  UseFilters,
+} from '@nestjs/common';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
+import { Dayjs } from 'dayjs';
+import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 
 @Controller('commute-records')
 export class CommuteRecordsController {
@@ -12,9 +22,21 @@ export class CommuteRecordsController {
     return this.commuteRecordsService.getRecentCommuteRecords();
   }
 
-  @Post('/arrive')
-  updateArriveTime() {
+  @Patch('/arrive')
+  @UseFilters(new HttpExceptionFilter())
+  updateArriveTime(): Promise<string> {
     return this.commuteRecordsService.updateArriveTime();
+  }
+
+  // @Patch('/arrive/am')
+  // @UseFilters(new HttpExceptionFilter())
+  // updateAmArriveTime(): Promise<string> {
+  //   return this.commuteRecordsService.updateAmArriveTime();
+  // }
+
+  @Patch('/leave')
+  updateLeaveTime(): Promise<string> {
+    return this.commuteRecordsService.updateLeaveTime();
   }
 
   // @Get('/:mondayDate')
