@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Between, Repository } from 'typeorm';
@@ -88,7 +88,6 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     const { id, arrive_time, is_am } = record;
     const addAmWorkTime = is_am ? 240 : 0;
     const addPmWorkTime = isPm ? 240 : 0;
-    console.log(record, isPm, addPmWorkTime);
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
@@ -126,5 +125,20 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       is_full,
     });
     await this.commuteRecordRepository.save(record);
+  }
+
+  async getCommuteRecordsOfWeek(mondayDate: Dayjs) {
+    const records = await this.commuteRecordRepository.find({
+      where: {
+        created_at: Between(
+          dayjs(mondayDate).subtract(5, 'd').format(),
+          dayjs(mondayDate).format(),
+        ),
+      },
+      order: {
+        created_at: 'ASC',
+      },
+    });
+    return records;
   }
 }

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
-
+import { Dayjs } from 'dayjs';
 @Injectable()
 export class CommuteRecordsService {
   constructor(
@@ -82,6 +82,13 @@ export class CommuteRecordsService {
         });
       }
     }
+  }
+
+  /**
+   * 월요일부터 5일 간의 기록 가져오기
+   */
+  getCommuteRecordsOfWeek(mondayDate: Dayjs): Promise<CommuteRecordDto[]> {
+    return this.commuteRecordsRepository.getCommuteRecordsOfWeek(mondayDate);
   }
 
   insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {

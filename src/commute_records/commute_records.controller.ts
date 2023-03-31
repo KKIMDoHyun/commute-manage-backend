@@ -1,8 +1,18 @@
-import { Body, Controller, Get, Patch, Post, UseFilters } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+} from '@nestjs/common';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
+import dayjs, { Dayjs } from 'dayjs';
 
 @Controller('commute-records')
 export class CommuteRecordsController {
@@ -37,12 +47,13 @@ export class CommuteRecordsController {
     return this.commuteRecordsService.updatePmLeaveTime();
   }
 
-  // @Get('/:mondayDate')
-  // getCommuteRecordsOfWeek(
-  //   @Param('mondayDate') mondayDate: Dayjs,
-  // ): TCommuteRecord[] {
-  //   return this.commuteRecordsService.getCommuteRecordsOfWeek(mondayDate);
-  // }
+  @Get('/week')
+  @UseFilters(new HttpExceptionFilter())
+  getCommuteRecordsOfWeek(
+    @Query('mondayDate') mondayDate: Dayjs,
+  ): Promise<CommuteRecordDto[]> {
+    return this.commuteRecordsService.getCommuteRecordsOfWeek(mondayDate);
+  }
 
   @Post('/')
   insertTestRecord(@Body() insertTestRecordDto: InsertTestRecordDto) {
