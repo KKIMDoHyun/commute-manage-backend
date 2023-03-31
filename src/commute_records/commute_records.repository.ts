@@ -1,15 +1,6 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
-import { NotFoundError } from 'rxjs';
-import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
-import { isAlreadyLeaveDto } from 'src/commute_records/dto/get-isAlreadyLeave.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Between, Repository } from 'typeorm';
