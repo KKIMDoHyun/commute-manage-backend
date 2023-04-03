@@ -4,6 +4,7 @@ import config from 'config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { APP_FILTER } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
 
 const dbConfig = config.get('db');
 @Module({
@@ -19,6 +20,7 @@ const dbConfig = config.get('db');
       synchronize: dbConfig.synchronize,
     }),
     CommuteRecordsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
