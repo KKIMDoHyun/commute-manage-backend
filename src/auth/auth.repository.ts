@@ -33,6 +33,7 @@ export class AuthRepository extends Repository<User> {
       team,
       position,
     });
+    console.log(user);
     try {
       await this.authRepository.save(user);
       return user;
@@ -49,12 +50,22 @@ export class AuthRepository extends Repository<User> {
     const { email, password } = userSignInDto;
     const user = await this.authRepository.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { password, ...result } = user;
-      return result;
+      return user;
     } else {
       throw new UnauthorizedException(
         '아이디 또는 비밀번호를 잘못 입력했습니다!',
       );
     }
   }
+
+  // async getJwtAccessToken(id: number): Promise<{ accessToken: string }> {
+  //   const payload = { id };
+  //   const token = this.jwtService.sign(payload, {
+  //     secret: config.get('jwt.accessToken_secret'),
+  //     expiresIn: config.get('jwt').accessToken_expiresIn,
+  //   });
+  //   return {
+  //     accessToken: token,
+  //   };
+  // }
 }
