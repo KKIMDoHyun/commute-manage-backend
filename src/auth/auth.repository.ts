@@ -2,12 +2,15 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSignUpDto } from 'src/auth/dto/user-signUp.dto';
 import { User } from 'src/auth/entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { UserSignInDto } from 'src/auth/dto/user-signIn.dto';
+import { UserInfoDto } from 'src/auth/dto/user-info.dto';
 
 @Injectable()
 export class AuthRepository extends Repository<User> {
@@ -30,7 +33,6 @@ export class AuthRepository extends Repository<User> {
       team,
       position,
     });
-    console.log(user);
     try {
       await this.authRepository.save(user);
       return user;
@@ -40,6 +42,19 @@ export class AuthRepository extends Repository<User> {
       } else {
         throw new InternalServerErrorException();
       }
+    }
+  }
+
+  async signIn(userSignInDto: UserSignInDto): Promise<UserInfoDto> {
+    const { email, password } = userSignInDto;
+    const user = await this.authRepository.findOne({ email });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const { password, ...result } = user;
+      return result;
+    } else {
+      throw new UnauthorizedException(
+        '아이디 또는 비밀번호를 잘못 입력했습니다!',
+      );
     }
   }
 }

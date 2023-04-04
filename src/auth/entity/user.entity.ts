@@ -7,6 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Dayjs } from 'dayjs';
+import { PositionType } from 'src/auth/type/position.type';
 
 @Entity()
 @Unique(['email'])
@@ -30,5 +31,5 @@ export class User extends BaseEntity {
   team: string;
 
   @Column()
-  position: string;
+  position: PositionType;
 }
