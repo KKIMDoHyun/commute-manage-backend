@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Dayjs } from 'dayjs';
+import { User } from 'src/auth/entity/user.entity';
 @Entity()
 export class CommuteRecord extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -34,4 +37,8 @@ export class CommuteRecord extends BaseEntity {
 
   @Column({ default: false })
   is_full: boolean;
+
+  @ManyToOne(() => User, (user) => user.commuteRecord, { eager: false })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

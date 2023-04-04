@@ -17,9 +17,9 @@ export class AuthService {
     return this.authRepository.signUp(userSignUpDto);
   }
 
-  async signIn(userSignUpDto: UserSignInDto): Promise<{ accessToken: string }> {
+  async signIn(userSignInDto: UserSignInDto): Promise<{ accessToken: string }> {
     try {
-      const user = await this.authRepository.signIn(userSignUpDto);
+      const user = await this.authRepository.signIn(userSignInDto);
       const payload = {
         email: user.email,
         name: user.name,

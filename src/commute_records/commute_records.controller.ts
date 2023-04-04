@@ -15,6 +15,8 @@ import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import dayjs, { Dayjs } from 'dayjs';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { User } from 'src/auth/entity/user.entity';
 
 @Controller('commute-records')
 @UseGuards(AuthGuard())
@@ -22,20 +24,20 @@ export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
   @Get('/')
-  getAllCommuteRecords(): Promise<CommuteRecordDto[]> {
-    return this.commuteRecordsService.getRecentCommuteRecords();
+  getAllCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
+    return this.commuteRecordsService.getRecentCommuteRecords(user);
   }
 
   @Patch('/arrive')
   @UseFilters(new HttpExceptionFilter())
-  updateArriveTime(): Promise<string> {
-    return this.commuteRecordsService.updateArriveTime();
+  updateArriveTime(@GetUser() user: User): Promise<string> {
+    return this.commuteRecordsService.updateArriveTime(user);
   }
 
   @Patch('/arrive/am')
   @UseFilters(new HttpExceptionFilter())
-  updateAmArriveTime(): Promise<string> {
-    return this.commuteRecordsService.updateAmArriveTime();
+  updateAmArriveTime(@GetUser() user: User): Promise<string> {
+    return this.commuteRecordsService.updateAmArriveTime(user);
   }
 
   @Patch('/leave')

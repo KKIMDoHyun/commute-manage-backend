@@ -19,8 +19,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   async validate(payload) {
-    const user = await this.authRepository.findOne(payload.id);
-    console.log('SDDS');
+    const { email } = payload;
+    const user = await this.authRepository.findOne({ email });
     if (user) {
       return user;
     }

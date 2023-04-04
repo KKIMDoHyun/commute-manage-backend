@@ -33,7 +33,6 @@ export class AuthRepository extends Repository<User> {
       team,
       position,
     });
-    console.log(user);
     try {
       await this.authRepository.save(user);
       return user;

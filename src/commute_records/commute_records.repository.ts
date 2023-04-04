@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import dayjs, { Dayjs } from 'dayjs';
+import { User } from 'src/auth/entity/user.entity';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Between, Repository } from 'typeorm';
@@ -10,22 +11,25 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
   @InjectRepository(CommuteRecord)
   private readonly commuteRecordRepository: Repository<CommuteRecord>;
 
-  async getRecentCommuteRecords(): Promise<CommuteRecord[]> {
-    const records = await this.commuteRecordRepository.find({
-      where: {
+  async getRecentCommuteRecords(user: User): Promise<CommuteRecord[]> {
+    const query = await this.commuteRecordRepository.createQueryBuilder('cr');
+    query
+      .where('created_at = :created_at', {
         created_at: Between(
           dayjs().subtract(7, 'd').format(),
           dayjs().format(),
         ),
-      },
-    });
+      })
+      .where('cr.user_id = :userId', { userId: user.id });
+    const records = await query.getMany();
     return records;
   }
 
-  async isAlreadyArrive(): Promise<string> {
+  async isAlreadyArrive(user: User): Promise<string> {
     const findRecord = await this.commuteRecordRepository.findOne({
       where: {
         today_date: dayjs().format('YYYY-MM-DD'),
+        user: user.id,
       },
       select: ['today_date', 'arrive_time'],
     });
@@ -66,16 +70,19 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return recentRecord;
   }
 
-  async updateArriveTime(isAm?: boolean): Promise<string> {
+  async updateArriveTime(isAm: boolean, user: User): Promise<string> {
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
       .set({
         arrive_time: dayjs().format(),
-        is_am: isAm ? true : false,
+        is_am: isAm,
       })
       .where('today_date = :today_date', {
         today_date: dayjs().format('YYYY-MM-DD'),
+      })
+      .where('user_id = :user_id', {
+        user_id: user.id,
       })
       .execute();
     return dayjs().format();

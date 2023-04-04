@@ -3,11 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { Dayjs } from 'dayjs';
 import { PositionType } from 'src/auth/type/position.type';
+import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 
 @Entity()
 @Unique(['email'])
@@ -32,4 +34,9 @@ export class User extends BaseEntity {
 
   @Column()
   position: PositionType;
+
+  @OneToMany(() => CommuteRecord, (commuteRecord) => commuteRecord.user, {
+    eager: true,
+  })
+  commuteRecord: CommuteRecord[];
 }
