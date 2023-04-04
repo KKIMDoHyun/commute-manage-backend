@@ -4,9 +4,10 @@ import { CommuteRecordsController } from './commute_records.controller';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CommuteRecord])],
+  imports: [TypeOrmModule.forFeature([CommuteRecord]), AuthModule],
   providers: [CommuteRecordsService, CommuteRecordsRepository],
   controllers: [CommuteRecordsController],
 })

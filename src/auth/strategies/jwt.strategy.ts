@@ -1,21 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthRepository } from 'src/auth/auth.repository';
 import config = require('config');
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entity/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private readonly authRepository: AuthRepository) {
+  constructor(
+    @InjectRepository(User)
+    private authRepository: Repository<User>,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: config.get('jwt.accessToken_secret'),
     });
   }
-
   async validate(payload) {
     const user = await this.authRepository.findOne(payload.id);
+    console.log('SDDS');
     if (user) {
       return user;
     }

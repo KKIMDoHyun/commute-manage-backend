@@ -7,14 +7,17 @@ import {
   Post,
   Query,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import dayjs, { Dayjs } from 'dayjs';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('commute-records')
+@UseGuards(AuthGuard())
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
