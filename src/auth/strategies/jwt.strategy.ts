@@ -13,9 +13,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private authRepository: Repository<User>,
   ) {
     super({
+      secretOrKey:
+        process.env.JWT_SECRET || config.get('jwt.accessToken_secret'),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get('jwt.accessToken_secret'),
     });
   }
   async validate(payload) {
