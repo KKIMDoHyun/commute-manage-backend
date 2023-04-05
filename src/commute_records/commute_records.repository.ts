@@ -12,16 +12,15 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
   private readonly commuteRecordRepository: Repository<CommuteRecord>;
 
   async getRecentCommuteRecords(user: User): Promise<CommuteRecord[]> {
-    const query = await this.commuteRecordRepository.createQueryBuilder('cr');
-    query
-      .where('created_at = :created_at', {
+    const records = await this.commuteRecordRepository.find({
+      where: {
         created_at: Between(
           dayjs().subtract(7, 'd').format(),
           dayjs().format(),
         ),
-      })
-      .where('cr.user_id = :userId', { userId: user.id });
-    const records = await query.getMany();
+        user: user.id,
+      },
+    });
     return records;
   }
 

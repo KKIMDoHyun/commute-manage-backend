@@ -13,7 +13,7 @@ import { CommuteRecordsService } from 'src/commute_records/commute_records.servi
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
