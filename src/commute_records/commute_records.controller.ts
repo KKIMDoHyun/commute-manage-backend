@@ -52,6 +52,12 @@ export class CommuteRecordsController {
     return this.commuteRecordsService.updatePmLeaveTime(user);
   }
 
+  @Patch('/annual_holiday')
+  @UseFilters(new HttpExceptionFilter())
+  updateAnnualHoliday(@GetUser() user: User): Promise<void> {
+    return this.commuteRecordsService.updateAnnualHoliday(user);
+  }
+
   @Get('/week')
   @UseFilters(new HttpExceptionFilter())
   getCommuteRecordsOfWeek(

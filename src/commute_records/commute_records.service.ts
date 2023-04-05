@@ -96,6 +96,12 @@ export class CommuteRecordsService {
       }
     }
   }
+  /**
+   * 연차 기능
+   */
+  async updateAnnualHoliday(user: User): Promise<void> {
+    return this.commuteRecordsRepository.updateAnnualHoliday(user);
+  }
 
   /**
    * 월요일부터 5일 간의 기록 가져오기

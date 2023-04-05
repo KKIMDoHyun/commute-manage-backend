@@ -116,6 +116,21 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return dayjs().format();
   }
 
+  async updateAnnualHoliday(user: User): Promise<void> {
+    await this.commuteRecordRepository
+      .createQueryBuilder()
+      .update(CommuteRecord)
+      .set({
+        is_annual: true,
+        work_time: 480,
+      })
+      .where('today_date = :today_date', {
+        today_date: dayjs().format('YYYY-MM-DD'),
+      })
+      .where('user_id = :user_id', { user_id: user.id })
+      .execute();
+  }
+
   async insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {
     const {
       arrive_time,
