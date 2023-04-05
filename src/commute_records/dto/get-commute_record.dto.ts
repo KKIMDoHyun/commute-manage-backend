@@ -7,5 +7,5 @@ export class CommuteRecordDto {
   work_time: number;
   is_am: boolean;
   is_pm: boolean;
-  is_full: boolean;
+  is_annual: boolean;
 }

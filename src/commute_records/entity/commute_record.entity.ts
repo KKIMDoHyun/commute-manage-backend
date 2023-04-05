@@ -36,7 +36,7 @@ export class CommuteRecord extends BaseEntity {
   is_pm: boolean;
 
   @Column({ default: false })
-  is_full: boolean;
+  is_annual: boolean;
 
   @ManyToOne(() => User, (user) => user.commuteRecord, { eager: false })
   @JoinColumn({ name: 'user_id' })

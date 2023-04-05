@@ -124,7 +124,7 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       leave_time,
       is_pm,
       is_am,
-      is_full,
+      is_annual,
     } = insertTestRecordDto;
     const record = await this.commuteRecordRepository.create({
       arrive_time,
@@ -133,7 +133,7 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       leave_time,
       is_pm,
       is_am,
-      is_full,
+      is_annual,
     });
     await this.commuteRecordRepository.save(record);
   }
