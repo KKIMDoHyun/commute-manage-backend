@@ -54,10 +54,16 @@ export class CommuteRecordsService {
   /**
    * 퇴근하기 기능
    */
-  async updateLeaveTime(): Promise<string> {
+  async updateLeaveTime(user: User): Promise<string> {
     try {
-      const recentRecord = await this.commuteRecordsRepository.isAlreadyLeave();
-      return this.commuteRecordsRepository.updateLeaveTime(recentRecord);
+      const recentRecord = await this.commuteRecordsRepository.isAlreadyLeave(
+        user,
+      );
+      return this.commuteRecordsRepository.updateLeaveTime(
+        recentRecord,
+        false,
+        user,
+      );
     } catch (err) {
       if (err.status === 400) {
         throw new BadRequestException(err.response, {
@@ -71,10 +77,16 @@ export class CommuteRecordsService {
   /**
    * 오후 반차 기능
    */
-  async updatePmLeaveTime(): Promise<string> {
+  async updatePmLeaveTime(user: User): Promise<string> {
     try {
-      const recentRecord = await this.commuteRecordsRepository.isAlreadyLeave();
-      return this.commuteRecordsRepository.updateLeaveTime(recentRecord, true);
+      const recentRecord = await this.commuteRecordsRepository.isAlreadyLeave(
+        user,
+      );
+      return this.commuteRecordsRepository.updateLeaveTime(
+        recentRecord,
+        true,
+        user,
+      );
     } catch (err) {
       if (err.status === 400) {
         throw new BadRequestException(err.response, {
@@ -88,8 +100,14 @@ export class CommuteRecordsService {
   /**
    * 월요일부터 5일 간의 기록 가져오기
    */
-  getCommuteRecordsOfWeek(mondayDate: Dayjs): Promise<CommuteRecordDto[]> {
-    return this.commuteRecordsRepository.getCommuteRecordsOfWeek(mondayDate);
+  getCommuteRecordsOfWeek(
+    mondayDate: Dayjs,
+    user: User,
+  ): Promise<CommuteRecordDto[]> {
+    return this.commuteRecordsRepository.getCommuteRecordsOfWeek(
+      mondayDate,
+      user,
+    );
   }
 
   insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {

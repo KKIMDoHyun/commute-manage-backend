@@ -44,8 +44,11 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return dayjs().format();
   }
 
-  async isAlreadyLeave(): Promise<CommuteRecord> {
+  async isAlreadyLeave(user: User): Promise<CommuteRecord> {
     const recentRecord = await this.commuteRecordRepository.findOne({
+      where: {
+        user: user.id,
+      },
       order: {
         created_at: 'DESC',
       },
@@ -89,7 +92,8 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
 
   async updateLeaveTime(
     record: CommuteRecord,
-    isPm?: boolean,
+    isPm: boolean,
+    user: User,
   ): Promise<string> {
     const { id, arrive_time, is_am } = record;
     const addAmWorkTime = is_am ? 240 : 0;
@@ -106,6 +110,7 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
         is_pm: isPm ? true : false,
       })
       .where('id = :id', { id: id })
+      .where('user_id = :user_id', { user_id: user.id })
       .execute();
 
     return dayjs().format();
@@ -133,13 +138,14 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     await this.commuteRecordRepository.save(record);
   }
 
-  async getCommuteRecordsOfWeek(mondayDate: Dayjs) {
+  async getCommuteRecordsOfWeek(mondayDate: Dayjs, user: User) {
     const records = await this.commuteRecordRepository.find({
       where: {
         created_at: Between(
           dayjs(mondayDate).subtract(5, 'd').format(),
           dayjs(mondayDate).format(),
         ),
+        user: user.id,
       },
       order: {
         created_at: 'ASC',

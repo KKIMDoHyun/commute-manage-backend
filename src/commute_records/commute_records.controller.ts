@@ -42,22 +42,23 @@ export class CommuteRecordsController {
 
   @Patch('/leave')
   @UseFilters(new HttpExceptionFilter())
-  updateLeaveTime(): Promise<string> {
-    return this.commuteRecordsService.updateLeaveTime();
+  updateLeaveTime(@GetUser() user: User): Promise<string> {
+    return this.commuteRecordsService.updateLeaveTime(user);
   }
 
   @Patch('/leave/pm')
   @UseFilters(new HttpExceptionFilter())
-  updatePmLeaveTime(): Promise<string> {
-    return this.commuteRecordsService.updatePmLeaveTime();
+  updatePmLeaveTime(@GetUser() user: User): Promise<string> {
+    return this.commuteRecordsService.updatePmLeaveTime(user);
   }
 
   @Get('/week')
   @UseFilters(new HttpExceptionFilter())
   getCommuteRecordsOfWeek(
     @Query('mondayDate') mondayDate: Dayjs,
+    @GetUser() user: User,
   ): Promise<CommuteRecordDto[]> {
-    return this.commuteRecordsService.getCommuteRecordsOfWeek(mondayDate);
+    return this.commuteRecordsService.getCommuteRecordsOfWeek(mondayDate, user);
   }
 
   @Post('/')
