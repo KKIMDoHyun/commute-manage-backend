@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { TeamModule } from './team/team.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const dbConfig = config.get('db');
 @Module({
@@ -23,6 +24,7 @@ const dbConfig = config.get('db');
     CommuteRecordsModule,
     AuthModule,
     TeamModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [
