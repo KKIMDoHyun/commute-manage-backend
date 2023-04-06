@@ -40,6 +40,6 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'team_id' })
   team: Team;
 
-  @Column()
+  @Column({ default: false })
   isMaster: boolean;
 }

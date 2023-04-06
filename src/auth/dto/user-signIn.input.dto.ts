@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class UserSignInDto {
+export class UserSignInInputDto {
   @IsNotEmpty()
   @IsEmail()
   readonly email: string;

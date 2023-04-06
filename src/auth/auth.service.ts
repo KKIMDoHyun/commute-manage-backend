@@ -2,9 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRepository } from 'src/auth/auth.repository';
 import { UserInfoDto } from 'src/auth/dto/user-info.dto';
-import { UserSignInDto } from 'src/auth/dto/user-signIn.dto';
-import { UserSignUpDto } from 'src/auth/dto/user-signUp.dto';
+import { UserSignInInputDto } from 'src/auth/dto/user-signIn.input.dto';
+import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
 import config = require('config');
+import { UserSignInOutputDto } from 'src/auth/dto/user-signIn.output.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,13 +14,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(userSignUpDto: UserSignUpDto): Promise<UserSignUpDto> {
-    return this.authRepository.signUp(userSignUpDto);
+  async signUp(
+    userSignUpInputDto: UserSignUpInputDto,
+  ): Promise<UserSignUpInputDto> {
+    return this.authRepository.signUp(userSignUpInputDto);
   }
 
-  async signIn(userSignInDto: UserSignInDto): Promise<{ accessToken: string }> {
+  async signIn(
+    userSignInInputDto: UserSignInInputDto,
+  ): Promise<UserSignInOutputDto> {
     try {
-      const user = await this.authRepository.signIn(userSignInDto);
+      const user = await this.authRepository.signIn(userSignInInputDto);
       const payload = {
         email: user.email,
         name: user.name,

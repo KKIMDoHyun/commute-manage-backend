@@ -5,11 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserSignUpDto } from 'src/auth/dto/user-signUp.dto';
+import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
 import { User } from 'src/auth/entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { UserSignInDto } from 'src/auth/dto/user-signIn.dto';
+import { UserSignInInputDto } from 'src/auth/dto/user-signIn.input.dto';
 import { UserInfoDto } from 'src/auth/dto/user-info.dto';
 
 @Injectable()
@@ -22,8 +22,8 @@ export class AuthRepository extends Repository<User> {
     return foundUser ? true : false;
   }
 
-  async signUp(userSignUpDto: UserSignUpDto): Promise<User> {
-    const { email, name, password } = userSignUpDto;
+  async signUp(userSignUpInputDto: UserSignUpInputDto): Promise<User> {
+    const { email, name, password } = userSignUpInputDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = this.authRepository.create({
@@ -43,8 +43,8 @@ export class AuthRepository extends Repository<User> {
     }
   }
 
-  async signIn(userSignInDto: UserSignInDto): Promise<UserInfoDto> {
-    const { email, password } = userSignInDto;
+  async signIn(userSignInInputDto: UserSignInInputDto): Promise<UserInfoDto> {
+    const { email, password } = userSignInInputDto;
     const user = await this.authRepository.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
       return user;
