@@ -3,13 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { Dayjs } from 'dayjs';
-import { PositionType } from 'src/auth/type/position.type';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
+import { Team } from 'src/team/entity/team.entity';
 
 @Entity()
 @Unique(['email'])
@@ -29,14 +31,15 @@ export class User extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
-  team: string;
-
-  @Column()
-  position: PositionType;
-
   @OneToMany(() => CommuteRecord, (commuteRecord) => commuteRecord.user, {
     eager: true,
   })
   commuteRecord: CommuteRecord[];
+
+  @ManyToOne(() => Team, (team) => team.user, { eager: false })
+  @JoinColumn({ name: 'team_id' })
+  team: Team;
+
+  @Column()
+  isMaster: boolean;
 }

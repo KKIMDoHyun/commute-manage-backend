@@ -6,7 +6,6 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { PositionType } from 'src/auth/type/position.type';
 
 export class UserSignUpDto {
   @IsNotEmpty()
@@ -27,10 +26,4 @@ export class UserSignUpDto {
   @MinLength(2, { message: '이름은 최소 2자 이상 입력해야 합니다.' })
   @MaxLength(10, { message: '이름은 최대 10자 이하 입력해야 합니다.' })
   readonly name: string;
-
-  @IsNotEmpty({ message: '팀을 입력해주세요.' })
-  readonly team: string;
-
-  @IsNotEmpty()
-  readonly position: PositionType;
 }

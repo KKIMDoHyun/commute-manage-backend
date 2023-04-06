@@ -23,8 +23,6 @@ export class AuthService {
       const payload = {
         email: user.email,
         name: user.name,
-        position: user.position,
-        team: user.team,
       };
       const token = this.jwtService.sign(payload, {
         secret: config.get('jwt.accessToken_secret'),

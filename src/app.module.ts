@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { TeamModule } from './team/team.module';
 
 const dbConfig = config.get('db');
 @Module({
@@ -21,6 +22,7 @@ const dbConfig = config.get('db');
     }),
     CommuteRecordsModule,
     AuthModule,
+    TeamModule,
   ],
   controllers: [],
   providers: [
