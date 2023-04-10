@@ -2,11 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { User } from 'src/auth/entity/user.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { AuthRepository } from 'src/auth/auth.repository';
 @Injectable()
 export class CommuteRecordsService {
   constructor(
+    private readonly authRepository: AuthRepository,
     private readonly commuteRecordsRepository: CommuteRecordsRepository,
   ) {}
 
@@ -114,6 +117,20 @@ export class CommuteRecordsService {
       mondayDate,
       user,
     );
+  }
+
+  /**
+   * 월~금 오전 6시에 자동으로 ROW 생성
+   */
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron('0 0 6 * * 1-5')
+  async handleCron() {
+    const userList = await this.authRepository.getUserList();
+    const temp = userList.map((v) => {
+      return { today_date: dayjs().format('YYYY-MM-DD'), user: v.id };
+    });
+    console.log(temp);
+    return this.commuteRecordsRepository.insertAutoRecord(temp);
   }
 
   insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {

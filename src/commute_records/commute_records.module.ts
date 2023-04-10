@@ -5,10 +5,16 @@ import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 import { AuthModule } from 'src/auth/auth.module';
+import { User } from 'src/auth/entity/user.entity';
+import { AuthRepository } from 'src/auth/auth.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CommuteRecord]), AuthModule],
-  providers: [CommuteRecordsService, CommuteRecordsRepository],
+  imports: [
+    TypeOrmModule.forFeature([CommuteRecord]),
+    TypeOrmModule.forFeature([User]),
+    AuthModule,
+  ],
+  providers: [CommuteRecordsService, CommuteRecordsRepository, AuthRepository],
   controllers: [CommuteRecordsController],
 })
 export class CommuteRecordsModule {}

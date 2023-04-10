@@ -131,6 +131,31 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       .execute();
   }
 
+  async getCommuteRecordsOfWeek(mondayDate: Dayjs, user: User) {
+    const records = await this.commuteRecordRepository.find({
+      where: {
+        created_at: Between(
+          dayjs(mondayDate).subtract(5, 'd').format(),
+          dayjs(mondayDate).format(),
+        ),
+        user: user.id,
+      },
+      order: {
+        created_at: 'ASC',
+      },
+    });
+    return records;
+  }
+
+  async insertAutoRecord(userList) {
+    await this.commuteRecordRepository
+      .createQueryBuilder()
+      .insert()
+      .into(CommuteRecord)
+      .values([...userList])
+      .execute();
+  }
+
   async insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {
     const {
       arrive_time,
@@ -151,21 +176,5 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       is_annual,
     });
     await this.commuteRecordRepository.save(record);
-  }
-
-  async getCommuteRecordsOfWeek(mondayDate: Dayjs, user: User) {
-    const records = await this.commuteRecordRepository.find({
-      where: {
-        created_at: Between(
-          dayjs(mondayDate).subtract(5, 'd').format(),
-          dayjs(mondayDate).format(),
-        ),
-        user: user.id,
-      },
-      order: {
-        created_at: 'ASC',
-      },
-    });
-    return records;
   }
 }

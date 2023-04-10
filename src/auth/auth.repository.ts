@@ -55,6 +55,13 @@ export class AuthRepository extends Repository<User> {
     }
   }
 
+  async getUserList() {
+    const userList = await this.authRepository.find({
+      select: ['id'],
+    });
+    return userList;
+  }
+
   // async getJwtAccessToken(id: number): Promise<{ accessToken: string }> {
   //   const payload = { id };
   //   const token = this.jwtService.sign(payload, {
