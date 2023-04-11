@@ -99,11 +99,22 @@ export class CommuteRecordsService {
       }
     }
   }
+
   /**
    * 연차 기능
    */
   async updateAnnualHoliday(user: User): Promise<void> {
-    return this.commuteRecordsRepository.updateAnnualHoliday(user);
+    try {
+      await this.commuteRecordsRepository.isCanAnnualHoliday(user);
+      return this.commuteRecordsRepository.updateAnnualHoliday(user);
+    } catch (err) {
+      if (err.status === 400) {
+        throw new BadRequestException(err.response, {
+          cause: new Error(),
+          description: err.response,
+        });
+      }
+    }
   }
 
   /**
@@ -125,22 +136,10 @@ export class CommuteRecordsService {
   // @Cron(CronExpression.EVERY_10_SECONDS)
   @Cron('0 0 6 * * 1-5')
   async handleCron() {
-    const userList = await this.authRepository.getUserList();
-    const temp = userList.map((v) => {
+    const userIdList = await this.authRepository.getUserList();
+    const userValues = userIdList.map((v) => {
       return { today_date: dayjs().format('YYYY-MM-DD'), user: v.id };
     });
-    console.log(temp);
-    return this.commuteRecordsRepository.insertAutoRecord(temp);
-  }
-
-  insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {
-    return this.commuteRecordsRepository.insertTestRecord(insertTestRecordDto);
+    return this.commuteRecordsRepository.insertAutoRecord(userValues);
   }
 }
-
-/**
- * 해당 주의 기록 가져오기
- */
-// getCommuteRecordsOfWeek(mondayDate: Dayjs) {
-//   return this.commuteRecords;
-// }

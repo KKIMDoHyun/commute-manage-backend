@@ -32,12 +32,13 @@ export class User extends BaseEntity {
   name: string;
 
   @OneToMany(() => CommuteRecord, (commuteRecord) => commuteRecord.user, {
-    eager: true,
+    eager: false,
+    onDelete: 'CASCADE',
   })
   commuteRecord: CommuteRecord[];
 
-  @ManyToOne(() => Team, (team) => team.user, { eager: false })
-  @JoinColumn({ name: 'team_id' })
+  @ManyToOne(() => Team, (team) => team.user, { eager: true, nullable: true })
+  @JoinColumn({ name: 'user_team_id' })
   team: Team;
 
   @Column({ default: false })

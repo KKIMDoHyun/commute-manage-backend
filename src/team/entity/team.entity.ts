@@ -3,11 +3,16 @@ import {
   BaseEntity,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
 } from 'typeorm';
 
 @Entity()
+@Tree('closure-table')
 export class Team extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,11 +20,18 @@ export class Team extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
-  pId: number;
+  // @Column()
+  // pId: number;
 
   @OneToMany(() => User, (user) => user.team, {
-    eager: true,
+    eager: false,
+    onDelete: 'CASCADE',
   })
   user: User[];
+
+  @TreeChildren({ cascade: true })
+  children: Team[];
+
+  @TreeParent({ onDelete: 'CASCADE' })
+  parent: Team;
 }

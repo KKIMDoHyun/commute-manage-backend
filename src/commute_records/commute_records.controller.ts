@@ -1,17 +1,13 @@
 import {
-  Body,
   Controller,
   Get,
-  Param,
   Patch,
-  Post,
   Query,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
-import { InsertTestRecordDto } from 'src/commute_records/dto/insert-test_record.dto';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { Dayjs } from 'dayjs';
 import { AuthGuard } from '@nestjs/passport';
@@ -65,10 +61,5 @@ export class CommuteRecordsController {
     @GetUser() user: User,
   ): Promise<CommuteRecordDto[]> {
     return this.commuteRecordsService.getCommuteRecordsOfWeek(mondayDate, user);
-  }
-
-  @Post('/')
-  insertTestRecord(@Body() insertTestRecordDto: InsertTestRecordDto) {
-    return this.commuteRecordsService.insertTestRecord(insertTestRecordDto);
   }
 }

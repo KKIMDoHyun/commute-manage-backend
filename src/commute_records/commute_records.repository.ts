@@ -91,11 +91,11 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
   }
 
   async updateLeaveTime(
-    record: CommuteRecord,
+    recentRecord: CommuteRecord,
     isPm: boolean,
     user: User,
   ): Promise<string> {
-    const { id, arrive_time, is_am } = record;
+    const { id, arrive_time, is_am } = recentRecord;
     const addAmWorkTime = is_am ? 240 : 0;
     const addPmWorkTime = isPm ? 240 : 0;
     await this.commuteRecordRepository
@@ -114,6 +114,29 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
       .execute();
 
     return dayjs().format();
+  }
+
+  async isCanAnnualHoliday(user: User): Promise<void> {
+    const recentRecord = await this.commuteRecordRepository.findOne({
+      where: {
+        user: user.id,
+      },
+      order: {
+        created_at: 'DESC',
+      },
+    });
+    if (recentRecord.arrive_time) {
+      throw new HttpException(
+        '이미 출근을 하셨습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (recentRecord.leave_time) {
+      throw new HttpException(
+        '이미 퇴근을 하셨습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async updateAnnualHoliday(user: User): Promise<void> {
@@ -147,34 +170,12 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return records;
   }
 
-  async insertAutoRecord(userList) {
+  async insertAutoRecord(userValues): Promise<void> {
     await this.commuteRecordRepository
       .createQueryBuilder()
       .insert()
       .into(CommuteRecord)
-      .values([...userList])
+      .values([...userValues])
       .execute();
-  }
-
-  async insertTestRecord(insertTestRecordDto: InsertTestRecordDto) {
-    const {
-      arrive_time,
-      today_date,
-      work_time,
-      leave_time,
-      is_pm,
-      is_am,
-      is_annual,
-    } = insertTestRecordDto;
-    const record = await this.commuteRecordRepository.create({
-      arrive_time,
-      today_date,
-      work_time,
-      leave_time,
-      is_pm,
-      is_am,
-      is_annual,
-    });
-    await this.commuteRecordRepository.save(record);
   }
 }
