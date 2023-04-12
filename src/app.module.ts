@@ -20,7 +20,6 @@ const dbConfig = config.get('db');
       database: dbConfig.database,
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: dbConfig.synchronize,
-      logging: true,
     }),
     CommuteRecordsModule,
     AuthModule,
