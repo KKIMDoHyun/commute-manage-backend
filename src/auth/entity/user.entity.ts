@@ -37,7 +37,11 @@ export class User extends BaseEntity {
   })
   commuteRecord: CommuteRecord[];
 
-  @ManyToOne(() => Team, (team) => team.user, { eager: true, nullable: true })
+  @ManyToOne(() => Team, (team) => team.user, {
+    eager: true,
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_team_id' })
   team: Team;
 

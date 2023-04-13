@@ -25,7 +25,6 @@ export class Team extends BaseEntity {
 
   @OneToMany(() => User, (user) => user.team, {
     eager: false,
-    onDelete: 'CASCADE',
   })
   user: User[];
 

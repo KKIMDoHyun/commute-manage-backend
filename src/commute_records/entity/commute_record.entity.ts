@@ -38,7 +38,10 @@ export class CommuteRecord extends BaseEntity {
   @Column({ default: false })
   is_annual: boolean;
 
-  @ManyToOne(() => User, (user) => user.commuteRecord, { eager: false })
+  @ManyToOne(() => User, (user) => user.commuteRecord, {
+    eager: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
