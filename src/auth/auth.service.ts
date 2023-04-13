@@ -17,7 +17,15 @@ export class AuthService {
   async signUp(
     userSignUpInputDto: UserSignUpInputDto,
   ): Promise<UserSignUpInputDto> {
-    return this.authRepository.signUp(userSignUpInputDto);
+    try {
+      await this.authRepository.findUser(userSignUpInputDto.email);
+      return await this.authRepository.signUp(userSignUpInputDto);
+    } catch (err) {
+      throw new BadRequestException(err.response, {
+        cause: new Error(),
+        description: err.response,
+      });
+    }
   }
 
   async signIn(

@@ -17,9 +17,11 @@ export class AuthRepository extends Repository<User> {
   @InjectRepository(User)
   private readonly authRepository: Repository<User>;
 
-  async findUser(email: string): Promise<boolean> {
+  async findUser(email: string): Promise<void> {
     const foundUser = await this.authRepository.findOne({ email });
-    return foundUser ? true : false;
+    if (foundUser) {
+      throw new ConflictException('해당 계정이 이미 존재합니다.');
+    }
   }
 
   async signUp(userSignUpInputDto: UserSignUpInputDto): Promise<User> {
@@ -31,16 +33,8 @@ export class AuthRepository extends Repository<User> {
       name,
       password: hashedPassword,
     });
-    try {
-      await this.authRepository.save(user);
-      return user;
-    } catch (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('해당 계정이 이미 존재합니다.');
-      } else {
-        throw new InternalServerErrorException();
-      }
-    }
+    await this.authRepository.insert(user);
+    return user;
   }
 
   async signIn(userSignInInputDto: UserSignInInputDto): Promise<UserInfoDto> {
