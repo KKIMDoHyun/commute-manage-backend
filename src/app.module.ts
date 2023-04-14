@@ -7,7 +7,6 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { TeamModule } from './team/team.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserModule } from './user/user.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 
@@ -27,7 +26,7 @@ const dbConfig = config.get('db');
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    // { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
 export class AppModule {}

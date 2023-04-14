@@ -16,6 +16,7 @@ export class CommuteRecordsService {
    * 최근 7일 간의 기록 가져오기
    */
   getRecentCommuteRecords(user: User): Promise<CommuteRecordDto[]> {
+    console.log(user);
     return this.commuteRecordsRepository.getRecentCommuteRecords(user);
   }
 

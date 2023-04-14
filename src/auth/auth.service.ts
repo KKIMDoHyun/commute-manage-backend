@@ -10,8 +10,6 @@ import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/auth/entity/user.entity';
 import config = require('config');
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()

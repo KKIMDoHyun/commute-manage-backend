@@ -13,23 +13,21 @@ import { Dayjs } from 'dayjs';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
-import { Public } from 'src/auth/decorators/public-decorator';
 
 @Controller('commute-records')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard())
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
-  @Public()
   @Get('/')
   getAllCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
-    console.log('1');
     return this.commuteRecordsService.getRecentCommuteRecords(user);
   }
 
   @Patch('/arrive')
   @UseFilters(new HttpExceptionFilter())
   updateArriveTime(@GetUser() user: User): Promise<string> {
+    console.log(user);
     return this.commuteRecordsService.updateArriveTime(user);
   }
 

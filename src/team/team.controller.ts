@@ -11,7 +11,6 @@ export class TeamController {
 
   @Get('/members')
   @UseFilters(new HttpExceptionFilter())
-  @UseGuards(AuthGuard())
   getTeamMembers(@GetUser() user: User) {
     return this.teamService.getTeamMembers(user);
   }
