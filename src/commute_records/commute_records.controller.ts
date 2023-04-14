@@ -20,7 +20,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
-  @Get('/')
+  @Get('/recent')
   getAllCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
     console.log(user);
     return this.commuteRecordsService.getRecentCommuteRecords(user);
