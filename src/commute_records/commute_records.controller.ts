@@ -13,13 +13,14 @@ import { Dayjs } from 'dayjs';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('commute-records')
-@UseGuards(AuthGuard())
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
   @Get('/')
+  @UseGuards(JwtAuthGuard)
   getAllCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
     return this.commuteRecordsService.getRecentCommuteRecords(user);
   }

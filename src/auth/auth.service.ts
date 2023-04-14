@@ -58,7 +58,7 @@ export class AuthService {
     //   expiresIn: config.get('jwt').accessToken_expiresIn,
     // });
     return {
-      accessToken: `Bearer ${token}`,
+      accessToken: token,
       domain: 'localhost',
       path: '/',
       httpOnly: true,

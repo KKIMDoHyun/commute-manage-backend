@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import dayjs, { Dayjs } from 'dayjs';
@@ -15,9 +19,8 @@ export class CommuteRecordsService {
   /**
    * 최근 7일 간의 기록 가져오기
    */
-  getRecentCommuteRecords(user: User): Promise<CommuteRecordDto[]> {
-    console.log(user);
-    return this.commuteRecordsRepository.getRecentCommuteRecords(user);
+  async getRecentCommuteRecords(user: User): Promise<CommuteRecordDto[]> {
+    return await this.commuteRecordsRepository.getRecentCommuteRecords(user);
   }
 
   /**

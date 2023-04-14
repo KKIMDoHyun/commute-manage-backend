@@ -11,7 +11,6 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
   private readonly commuteRecordRepository: Repository<CommuteRecord>;
 
   async getRecentCommuteRecords(user: User): Promise<CommuteRecord[]> {
-    console.log(user);
     const records = await this.commuteRecordRepository.find({
       where: {
         created_at: Between(
