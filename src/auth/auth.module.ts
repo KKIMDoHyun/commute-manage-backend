@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import config = require('config');
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
+import { LocalStrategy } from 'src/auth/strategies/local.strategy';
+import { JwtRefreshTokenStrategy } from 'src/auth/strategies/jwt-refresh.strategy';
 
 const jwtConfig = config.get('jwt');
 @Module({
@@ -22,7 +24,13 @@ const jwtConfig = config.get('jwt');
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, JwtStrategy],
-  exports: [JwtStrategy, PassportModule],
+  providers: [
+    AuthService,
+    AuthRepository,
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+  ],
+  exports: [JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}

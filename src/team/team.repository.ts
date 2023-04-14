@@ -23,13 +23,6 @@ export class TeamRepository extends Repository<Team> {
     const temp = await this.teamRepository.manager
       .getTreeRepository(Team)
       .findDescendants(user.team, { relations: ['user'] });
-    // const temp = await this.teamRepository.manager
-    // .getTreeRepository(Team)
-    // .createDescendantsQueryBuilder('team', 'teamClosure', new Team())
-    // .andWhere('team.id = 33')
-    // .getMany();
-    // const arr = temp[0].user.filter((v) => !v.isMaster);
-    // temp[0].user = arr;
     console.log(temp.length);
     return temp;
   }

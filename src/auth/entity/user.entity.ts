@@ -12,6 +12,7 @@ import {
 import { Dayjs } from 'dayjs';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Team } from 'src/team/entity/team.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 @Unique(['email'])
@@ -47,4 +48,8 @@ export class User extends BaseEntity {
 
   @Column({ default: false })
   isMaster: boolean;
+
+  @Column({ nullable: true })
+  @Exclude()
+  currentHashedRefreshToken?: string;
 }

@@ -1,7 +1,6 @@
 import {
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,11 +16,17 @@ export class AuthRepository extends Repository<User> {
   @InjectRepository(User)
   private readonly authRepository: Repository<User>;
 
-  async findUser(email: string): Promise<void> {
+  async findUserByEmail(email: string): Promise<User> {
+    const foundUser = await this.authRepository.findOne({ email });
+    return foundUser;
+  }
+
+  async isUserExist(email: string): Promise<User> {
     const foundUser = await this.authRepository.findOne({ email });
     if (foundUser) {
       throw new ConflictException('해당 계정이 이미 존재합니다.');
     }
+    return foundUser;
   }
 
   async signUp(userSignUpInputDto: UserSignUpInputDto): Promise<User> {
@@ -55,15 +60,4 @@ export class AuthRepository extends Repository<User> {
     });
     return userList;
   }
-
-  // async getJwtAccessToken(id: number): Promise<{ accessToken: string }> {
-  //   const payload = { id };
-  //   const token = this.jwtService.sign(payload, {
-  //     secret: config.get('jwt.accessToken_secret'),
-  //     expiresIn: config.get('jwt').accessToken_expiresIn,
-  //   });
-  //   return {
-  //     accessToken: token,
-  //   };
-  // }
 }

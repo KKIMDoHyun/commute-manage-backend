@@ -20,9 +20,6 @@ export class Team extends BaseEntity {
   @Column()
   name: string;
 
-  // @Column()
-  // pId: number;
-
   @OneToMany(() => User, (user) => user.team, {
     eager: false,
   })
