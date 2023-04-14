@@ -12,12 +12,12 @@ import { User } from 'src/auth/entity/user.entity';
 import config = require('config');
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     private readonly authRepository: AuthRepository,
     private jwtService: JwtService,
   ) {}
@@ -54,16 +54,17 @@ export class AuthService {
    */
   async getCookieWithJwtAccessToken(id: number) {
     const payload = { id };
-    const token = this.jwtService.sign(payload, {
-      secret: config.get('jwt.accessToken_secret'),
-      expiresIn: config.get('jwt').accessToken_expiresIn,
-    });
+    const token = this.jwtService.sign(payload);
+    // const token = this.jwtService.sign(payload, {
+    //   secret: config.get('jwt.accessToken_secret'),
+    //   expiresIn: config.get('jwt').accessToken_expiresIn,
+    // });
     return {
-      accessToken: token,
+      accessToken: `Bearer ${token}`,
       domain: 'localhost',
       path: '/',
       httpOnly: true,
-      maxAge: Number(config.get('jwt').accessToken_expiresIn) * 1000,
+      maxAge: Number(config.get('jwt').accessToken_expiresIn),
     };
   }
 
@@ -90,8 +91,9 @@ export class AuthService {
    */
   async setCurrentRefreshToken(refreshToken: string, id: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    console.log(currentHashedRefreshToken);
-    await this.userRepository.update(id, { currentHashedRefreshToken });
+    await this.userRepository.updateRefreshToken(id, {
+      currentHashedRefreshToken,
+    });
   }
 
   /**
@@ -101,7 +103,6 @@ export class AuthService {
     refreshToken: string,
     id: number,
   ): Promise<User | undefined> {
-    console.log(refreshToken, id);
     const user = await this.authRepository.findOne({ id });
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,

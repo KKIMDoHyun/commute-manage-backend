@@ -1,13 +1,22 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from 'src/auth/entity/user.entity';
-import { Repository } from 'typeorm';
+import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class UserService {
-  private logger = new Logger('UserController');
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async findUserByEmail(email: string): Promise<User | undefined> {
+    return this.userRepository.findUserByEmail(email);
+  }
+  async findUserById(id: number) {
+    const user = await this.userRepository.findOne({ id });
+    if (user) {
+      return user;
+    }
+    throw new HttpException(
+      '사용자가 존재하지 않습니다.',
+      HttpStatus.NOT_FOUND,
+    );
+  }
 }
