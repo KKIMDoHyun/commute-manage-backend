@@ -18,12 +18,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey:
         process.env.JWT_SECRET || config.get('jwt.accessToken_secret'),
       ignoreExpiration: false,
-      // jwtFromRequest: ExtractJwt.fromExtractors([
-      //   (request) => {
-      //     return request?.cookies?.Authentication;
-      //   },
-      // ]),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request) => {
+          return request?.cookies?.Authentication;
+        },
+      ]),
+      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
