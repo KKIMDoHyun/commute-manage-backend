@@ -10,7 +10,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { UserModule } from './user/user.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 
-const dbConfig = config.get('db');
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig),

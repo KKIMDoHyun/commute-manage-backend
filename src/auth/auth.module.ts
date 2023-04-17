@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { LocalStrategy } from 'src/auth/strategies/local.strategy';
+import { JwtRefreshStrategy } from 'src/auth/strategies/jwt-refresh.strategy';
 
 const jwtConfig = config.get('jwt');
 @Module({
@@ -27,7 +28,13 @@ const jwtConfig = config.get('jwt');
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, JwtStrategy, LocalStrategy],
+  providers: [
+    AuthService,
+    AuthRepository,
+    JwtStrategy,
+    LocalStrategy,
+    JwtRefreshStrategy,
+  ],
   exports: [PassportModule, JwtModule, JwtStrategy],
 })
 export class AuthModule {}

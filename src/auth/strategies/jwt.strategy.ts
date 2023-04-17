@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       secretOrKey:
-        process.env.JWT_SECRET || config.get('jwt.accessToken_secret'),
+        process.env.JWT_SECRET || config.get('jwt').accessToken_secret,
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request) => {

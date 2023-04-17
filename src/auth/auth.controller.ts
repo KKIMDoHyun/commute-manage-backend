@@ -3,6 +3,7 @@ import {
   Controller,
   HttpCode,
   Post,
+  Get,
   Res,
   Req,
   UseFilters,
@@ -13,6 +14,7 @@ import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { AuthService } from 'src/auth/auth.service';
 import { UserSignInOutputDto } from 'src/auth/dto/user-signIn.output.dto';
 import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
+import { JwtRefreshGuard } from 'src/auth/guards/jwt-refresh.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { RequestWithUser } from 'src/auth/type/requestWithUser.type';
 
@@ -53,5 +55,15 @@ export class AuthController {
       refreshToken,
       id: user.id,
     };
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('/refresh')
+  async refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const user = req.user;
+    const { accessToken, ...accessOption } =
+      await this.authService.getCookieWithJwtAccessToken(user.id);
+    res.cookie('Authentication', accessToken, accessOption);
+    return user;
   }
 }
