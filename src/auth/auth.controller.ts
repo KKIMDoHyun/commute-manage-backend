@@ -58,6 +58,7 @@ export class AuthController {
     };
   }
 
+  @Public()
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
   async refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
