@@ -8,11 +8,6 @@ export class UserRepository extends Repository<User> {
   @InjectRepository(User)
   private readonly userRepository: Repository<User>;
 
-  async findUserByEmail(email: string): Promise<User | undefined> {
-    const foundUser = await this.userRepository.findOne({ email });
-    return foundUser;
-  }
-
   async updateRefreshToken(id: number, token: any) {
     await this.userRepository.update(id, token);
   }

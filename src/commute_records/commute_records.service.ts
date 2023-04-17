@@ -1,13 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import dayjs, { Dayjs } from 'dayjs';
 import { User } from 'src/auth/entity/user.entity';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { AuthRepository } from 'src/auth/auth.repository';
 @Injectable()
 export class CommuteRecordsService {
