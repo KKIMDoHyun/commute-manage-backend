@@ -12,6 +12,7 @@ import {
 import { Response } from 'express';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { AuthService } from 'src/auth/auth.service';
+import { Public } from 'src/auth/decorators/public-decorator';
 import { UserSignInOutputDto } from 'src/auth/dto/user-signIn.output.dto';
 import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
 import { JwtRefreshGuard } from 'src/auth/guards/jwt-refresh.guard';
@@ -30,6 +31,7 @@ export class AuthController {
     return this.authService.signUp(userSignUpInputDto);
   }
 
+  @Public()
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('/sign-in')
@@ -38,7 +40,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserSignInOutputDto> {
     const user = req.user;
-    // const user = await this.authService.validateUser(userSignInInputDto);
     const { accessToken, ...accessOption } =
       await this.authService.getCookieWithJwtAccessToken(user.id);
 
