@@ -3,7 +3,7 @@ import { CommuteRecordsRepository } from 'src/commute_records/commute_records.re
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import dayjs, { Dayjs } from 'dayjs';
 import { User } from 'src/auth/entity/user.entity';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { AuthRepository } from 'src/auth/auth.repository';
 @Injectable()
 export class CommuteRecordsService {
@@ -15,8 +15,8 @@ export class CommuteRecordsService {
   /**
    * 최근 7일 간의 기록 가져오기
    */
-  getRecentCommuteRecords(user: User): Promise<CommuteRecordDto[]> {
-    return this.commuteRecordsRepository.getRecentCommuteRecords(user);
+  async getRecentCommuteRecords(user: User): Promise<CommuteRecordDto[]> {
+    return await this.commuteRecordsRepository.getRecentCommuteRecords(user);
   }
 
   /**

@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
 import { CommuteRecordsModule } from './commute_records/commute_records.module';
-import config from 'config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { TeamModule } from './team/team.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserModule } from './user/user.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-const dbConfig = config.get('db');
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig),

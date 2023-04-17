@@ -10,8 +10,6 @@ import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/auth/entity/user.entity';
 import config = require('config');
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
@@ -55,12 +53,9 @@ export class AuthService {
   async getCookieWithJwtAccessToken(id: number) {
     const payload = { id };
     const token = this.jwtService.sign(payload);
-    // const token = this.jwtService.sign(payload, {
-    //   secret: config.get('jwt.accessToken_secret'),
-    //   expiresIn: config.get('jwt').accessToken_expiresIn,
-    // });
+
     return {
-      accessToken: `Bearer ${token}`,
+      accessToken: token,
       domain: 'localhost',
       path: '/',
       httpOnly: true,
@@ -97,13 +92,13 @@ export class AuthService {
   }
 
   /**
-   * 저의 고유 번호를 이용하여 데이터를 조회하고 refreshToken이 유효한지 확인
+   * 유저의 id를 이용하여 유저를 조회하고 refreshToken이 유효한지 확인
    */
   async getUserIfRefreshTokenMatches(
     refreshToken: string,
     id: number,
   ): Promise<User | undefined> {
-    const user = await this.authRepository.findOne({ id });
+    const user = await this.authRepository.findUserById(id);
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
       user.currentHashedRefreshToken,

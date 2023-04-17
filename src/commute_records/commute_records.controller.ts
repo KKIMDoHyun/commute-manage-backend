@@ -10,26 +10,25 @@ import { CommuteRecordsService } from 'src/commute_records/commute_records.servi
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { Dayjs } from 'dayjs';
-import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
-import { Public } from 'src/auth/decorators/public-decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('commute-records')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
-  @Public()
-  @Get('/')
+  @Get('/recent')
   getAllCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
-    console.log('1');
+    console.log(user);
     return this.commuteRecordsService.getRecentCommuteRecords(user);
   }
 
   @Patch('/arrive')
   @UseFilters(new HttpExceptionFilter())
   updateArriveTime(@GetUser() user: User): Promise<string> {
+    console.log(user);
     return this.commuteRecordsService.updateArriveTime(user);
   }
 

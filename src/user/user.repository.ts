@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entity/user.entity';
 import { Repository } from 'typeorm';
@@ -7,11 +7,6 @@ import { Repository } from 'typeorm';
 export class UserRepository extends Repository<User> {
   @InjectRepository(User)
   private readonly userRepository: Repository<User>;
-
-  async findUserByEmail(email: string): Promise<User | undefined> {
-    const foundUser = await this.userRepository.findOne({ email });
-    return foundUser;
-  }
 
   async updateRefreshToken(id: number, token: any) {
     await this.userRepository.update(id, token);

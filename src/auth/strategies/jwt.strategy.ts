@@ -2,32 +2,37 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import config = require('config');
-import { AuthRepository } from 'src/auth/auth.repository';
-import { UserService } from 'src/user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entity/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly userService: UserService) {
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {
     super({
       secretOrKey:
-        process.env.JWT_SECRET || config.get('jwt.accessToken_secret'),
+        process.env.JWT_SECRET || config.get('jwt').accessToken_secret,
+      ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request) => {
           return request?.cookies?.Authentication;
         },
       ]),
+      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
-  async validate(payload: { id: number }): Promise<any> {
-    console.log('밑에');
-    const { id } = payload;
-    const user = await this.userService.findUserById(id);
+  async validate(payload): Promise<any> {
+    console.log('페이로드', payload);
+    const user = await this.userRepository.findOne(payload.id);
     if (user) {
       return user;
     }
     throw new HttpException(
-      'User with this id does not exist',
+      '해당 유저가 존재하지 않습니다.',
       HttpStatus.NOT_FOUND,
     );
   }

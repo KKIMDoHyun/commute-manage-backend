@@ -1,5 +1,4 @@
-import { Controller, Get, Post, UseFilters, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Post, UseFilters } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
@@ -11,7 +10,6 @@ export class TeamController {
 
   @Get('/members')
   @UseFilters(new HttpExceptionFilter())
-  @UseGuards(AuthGuard())
   getTeamMembers(@GetUser() user: User) {
     return this.teamService.getTeamMembers(user);
   }

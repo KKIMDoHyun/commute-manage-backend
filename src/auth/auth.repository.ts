@@ -20,6 +20,13 @@ export class AuthRepository extends Repository<User> {
     const foundUser = await this.authRepository.findOne({ email });
     return foundUser;
   }
+  async findUserById(id: number): Promise<User> {
+    const foundUser = await this.authRepository.findOne({ id });
+    if (!foundUser) {
+      throw new ConflictException('해당 유저를 찾을 수 없습니다.');
+    }
+    return foundUser;
+  }
 
   async isUserExist(email: string): Promise<User> {
     const foundUser = await this.authRepository.findOne({ email });
