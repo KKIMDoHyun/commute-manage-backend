@@ -20,15 +20,13 @@ export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 
   @Get('/recent')
-  getAllCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
-    console.log(user);
+  getRecentCommuteRecords(@GetUser() user: User): Promise<CommuteRecordDto[]> {
     return this.commuteRecordsService.getRecentCommuteRecords(user);
   }
 
   @Patch('/arrive')
   @UseFilters(new HttpExceptionFilter())
   updateArriveTime(@GetUser() user: User): Promise<string> {
-    console.log(user);
     return this.commuteRecordsService.updateArriveTime(user);
   }
 

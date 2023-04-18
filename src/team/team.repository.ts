@@ -19,12 +19,30 @@ export class TeamRepository extends Repository<Team> {
   }
 
   async getTeamMembers(user: User) {
-    console.log(user);
-    const temp = await this.teamRepository.manager
+    const teams = await this.teamRepository.manager
       .getTreeRepository(Team)
       .findDescendants(user.team, { relations: ['user'] });
-    console.log(temp.length);
-    return temp;
+    const filteredTeam = teams.filter((v) => v.name !== user.team.name);
+
+    const filteredUser = filteredTeam.map((team) => {
+      return {
+        id: team.id,
+        name: team.name,
+        user: team.user
+          .map((user) => {
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              isMaster: user.isMaster,
+            };
+          })
+          .sort((a, b) =>
+            a.isMaster === b.isMaster ? 0 : a.isMaster ? -1 : 1,
+          ),
+      };
+    });
+    return filteredUser;
   }
 
   async createTeam() {

@@ -19,6 +19,9 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
         ),
         user: user.id,
       },
+      order: {
+        created_at: 'DESC',
+      },
     });
     return records;
   }
@@ -75,15 +78,15 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
+      .where('user_id = :user_id', {
+        user_id: user.id,
+      })
+      .andWhere('today_date = :today_date', {
+        today_date: dayjs().format('YYYY-MM-DD'),
+      })
       .set({
         arrive_time: dayjs().format(),
         is_am: isAm,
-      })
-      .where('today_date = :today_date', {
-        today_date: dayjs().format('YYYY-MM-DD'),
-      })
-      .where('user_id = :user_id', {
-        user_id: user.id,
       })
       .execute();
     return dayjs().format();
@@ -95,21 +98,23 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     user: User,
   ): Promise<string> {
     const { id, arrive_time, is_am } = recentRecord;
+    console.log(recentRecord);
     const addAmWorkTime = is_am ? 240 : 0;
     const addPmWorkTime = isPm ? 240 : 0;
+    console.log(isPm);
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
+      .where('user_id = :user_id', { user_id: user.id })
+      .andWhere('id = :id', { id: id })
       .set({
         leave_time: dayjs().format(),
         work_time:
           dayjs().startOf('m').diff(dayjs(arrive_time).startOf('m'), 'm') +
           addAmWorkTime +
           addPmWorkTime,
-        is_pm: isPm ? true : false,
+        is_pm: isPm,
       })
-      .where('id = :id', { id: id })
-      .where('user_id = :user_id', { user_id: user.id })
       .execute();
 
     return dayjs().format();
@@ -142,30 +147,35 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
+      .where('today_date = :today_date', {
+        today_date: dayjs().format('YYYY-MM-DD'),
+      })
+      .andWhere('user_id = :user_id', { user_id: user.id })
       .set({
         is_annual: true,
         work_time: 480,
       })
-      .where('today_date = :today_date', {
-        today_date: dayjs().format('YYYY-MM-DD'),
-      })
-      .where('user_id = :user_id', { user_id: user.id })
       .execute();
   }
 
   async getCommuteRecordsOfWeek(mondayDate: Dayjs, user: User) {
+    console.log(
+      dayjs(mondayDate).startOf('d').format(),
+      dayjs(mondayDate).add(5, 'd').endOf('d').format(),
+    );
     const records = await this.commuteRecordRepository.find({
-      where: {
-        created_at: Between(
-          dayjs(mondayDate).subtract(5, 'd').format(),
-          dayjs(mondayDate).format(),
-        ),
-        user: user.id,
-      },
       order: {
         created_at: 'ASC',
       },
+      where: {
+        created_at: Between(
+          dayjs(mondayDate).startOf('d').format(),
+          dayjs(mondayDate).add(4, 'd').endOf('d').format(),
+        ),
+        user: user.id,
+      },
     });
+    console.log(records);
     return records;
   }
 
