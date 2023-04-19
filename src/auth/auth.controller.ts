@@ -23,6 +23,7 @@ import { RequestWithUser } from 'src/auth/type/requestWithUser.type';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('/sign-up')
   @UseFilters(new HttpExceptionFilter())
   signUp(
@@ -47,13 +48,12 @@ export class AuthController {
       await this.authService.getCookieWithJwtRefreshToken(user.id);
 
     await this.authService.setCurrentRefreshToken(refreshToken, user.id);
-
     res.cookie('Authentication', accessToken, accessOption);
     res.cookie('Refresh', refreshToken, refreshOption);
+    res.cookie('isMaster', user.isMaster);
 
     return {
       accessToken,
-      refreshToken,
       id: user.id,
     };
   }
@@ -66,6 +66,6 @@ export class AuthController {
     const { accessToken, ...accessOption } =
       await this.authService.getCookieWithJwtAccessToken(user.id);
     res.cookie('Authentication', accessToken, accessOption);
-    return user;
+    return accessToken;
   }
 }

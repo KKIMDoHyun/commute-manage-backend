@@ -13,6 +13,7 @@ import { Dayjs } from 'dayjs';
 import { CommuteRecord } from 'src/commute_records/entity/commute_record.entity';
 import { Team } from 'src/team/entity/team.entity';
 import { Exclude } from 'class-transformer';
+import { UserRole } from 'src/auth/type/userRole.type';
 
 @Entity()
 @Unique(['email'])
@@ -32,6 +33,9 @@ export class User extends BaseEntity {
   @Column()
   name: string;
 
+  @Column({ default: 0 })
+  role: UserRole;
+
   @OneToMany(() => CommuteRecord, (commuteRecord) => commuteRecord.user, {
     eager: false,
     onDelete: 'CASCADE',
@@ -46,7 +50,7 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'user_team_id' })
   team: Team;
 
-  @Column({ default: false })
+  @Column({ default: 0 })
   isMaster: boolean;
 
   @Column({ nullable: true })

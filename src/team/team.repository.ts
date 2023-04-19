@@ -24,7 +24,7 @@ export class TeamRepository extends Repository<Team> {
       .findDescendants(user.team, { relations: ['user'] });
     const filteredTeam = teams.filter((v) => v.name !== user.team.name);
 
-    const filteredUser = filteredTeam.map((team) => {
+    const subTeams = filteredTeam.map((team) => {
       return {
         id: team.id,
         name: team.name,
@@ -42,7 +42,7 @@ export class TeamRepository extends Repository<Team> {
           ),
       };
     });
-    return filteredUser;
+    return { id: teams[0].id, name: teams[0].name, subTeams };
   }
 
   async createTeam() {

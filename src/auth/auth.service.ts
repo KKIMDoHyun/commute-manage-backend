@@ -52,14 +52,16 @@ export class AuthService {
    */
   async getCookieWithJwtAccessToken(id: number) {
     const payload = { id };
-    const token = this.jwtService.sign(payload);
+    const token = this.jwtService.sign(payload, {
+      secret: config.get('jwt').accessToken_secret,
+      expiresIn: config.get('jwt').accessToken_expiresIn,
+    });
 
     return {
       accessToken: token,
       domain: 'localhost',
       path: '/',
-      httpOnly: true,
-      maxAge: Number(config.get('jwt').accessToken_expiresIn),
+      httpOnly: false,
     };
   }
 
@@ -69,15 +71,14 @@ export class AuthService {
   async getCookieWithJwtRefreshToken(id: number) {
     const payload = { id };
     const token = this.jwtService.sign(payload, {
-      secret: config.get('jwt.refreshToken_secret'),
+      secret: config.get('jwt').refreshToken_secret,
       expiresIn: config.get('jwt').refreshToken_expiresIn,
     });
     return {
       refreshToken: token,
       domain: 'localhost',
       path: '/',
-      httpOnly: true,
-      maxAge: Number(config.get('jwt').refreshToken_expiresIn) * 1000,
+      httpOnly: false,
     };
   }
 
