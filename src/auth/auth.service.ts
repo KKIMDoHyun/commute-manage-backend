@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -57,12 +58,6 @@ export class AuthService {
       expiresIn: config.get('jwt').accessToken_expiresIn,
     });
     return { accessToken: token };
-    // return {
-    //   accessToken: token,
-    //   domain: 'localhost',
-    //   path: '/',
-    //   httpOnly: false,
-    // };
   }
 
   /**
@@ -98,8 +93,12 @@ export class AuthService {
   async getUserIfRefreshTokenMatches(
     refreshToken: string,
     id: number,
-  ): Promise<User | undefined> {
+  ): Promise<User | { user: User; auth: boolean }> {
+    console.log('RE', refreshToken);
     const user = await this.authRepository.findUserById(id);
+    if (!refreshToken) {
+      return { user: user, auth: false };
+    }
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
       user.currentHashedRefreshToken,

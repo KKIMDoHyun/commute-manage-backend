@@ -51,6 +51,7 @@ export class AuthController {
     res.cookie('Refresh', refreshToken, refreshOption);
     return {
       accessToken,
+      isMaster: user.isMaster,
     };
   }
 
@@ -66,11 +67,22 @@ export class AuthController {
   @Public()
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
-  async refresh(@Req() req: RequestWithUser) {
+  async refresh(
+    @Req() req: RequestWithUser,
+    // @Res({ passthrough: true }) res: Response,
+  ) {
     const user = req.user;
     const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
-    return accessToken;
+    // const { refreshToken, ...refreshOption } =
+    //   await this.authService.getCookieWithJwtRefreshToken(user.id);
+
+    // await this.authService.setCurrentRefreshToken(refreshToken, user.id);
+    // res.cookie('Refresh', refreshToken, refreshOption);
+    return {
+      accessToken,
+      isMaster: user.isMaster,
+    };
   }
 }
