@@ -9,7 +9,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/auth/decorators/public-decorator';
@@ -41,8 +41,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserSignInOutputDto> {
     const user = req.user;
-    // const { accessToken, ...accessOption } =
-    //   await this.authService.getCookieWithJwtAccessToken(user.id);
     const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
@@ -50,30 +48,29 @@ export class AuthController {
       await this.authService.getCookieWithJwtRefreshToken(user.id);
 
     await this.authService.setCurrentRefreshToken(refreshToken, user.id);
-    // res.cookie('Authentication', accessToken, accessOption);
     res.cookie('Refresh', refreshToken, refreshOption);
-    // res.cookie('isMaster', user.isMaster, {
-    //   domain: 'localhost',
-    //   path: '/',
-    //   httpOnly: true,
-    // });
-
     return {
       accessToken,
     };
   }
 
   @Public()
+  @Post('/sign-out')
+  @UseGuards(JwtRefreshGuard)
+  async signOut(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const { refreshOption } = this.authService.getCookiesForLogOut();
+    await this.authService.removeRefreshToken(req.user.id);
+    res.cookie('Refresh', '', refreshOption);
+  }
+
+  @Public()
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
-  async refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async refresh(@Req() req: RequestWithUser) {
     const user = req.user;
-    // const { accessToken, ...accessOption } =
-    //   await this.authService.getCookieWithJwtAccessToken(user.id);
     const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
-    // res.cookie('Authentication', accessToken, accessOption);
     return accessToken;
   }
 }

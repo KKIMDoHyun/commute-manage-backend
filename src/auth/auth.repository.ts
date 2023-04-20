@@ -67,4 +67,10 @@ export class AuthRepository extends Repository<User> {
     });
     return userList;
   }
+
+  async removeRefreshToken(id: number) {
+    await this.authRepository.update(id, {
+      currentHashedRefreshToken: null,
+    });
+  }
 }

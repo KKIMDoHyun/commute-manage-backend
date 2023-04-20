@@ -115,12 +115,6 @@ export class AuthService {
    */
   getCookiesForLogOut() {
     return {
-      accessOption: {
-        domain: 'localhost',
-        path: '/',
-        httpOnly: true,
-        maxAge: 0,
-      },
       refreshOption: {
         domain: 'localhost',
         path: '/',
@@ -131,8 +125,6 @@ export class AuthService {
   }
 
   async removeRefreshToken(id: number): Promise<void> {
-    await this.authRepository.update(id, {
-      currentHashedRefreshToken: null,
-    });
+    return await this.authRepository.removeRefreshToken(id);
   }
 }
