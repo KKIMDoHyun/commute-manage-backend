@@ -56,13 +56,13 @@ export class AuthService {
       secret: config.get('jwt').accessToken_secret,
       expiresIn: config.get('jwt').accessToken_expiresIn,
     });
-
-    return {
-      accessToken: token,
-      domain: 'localhost',
-      path: '/',
-      httpOnly: false,
-    };
+    return { accessToken: token };
+    // return {
+    //   accessToken: token,
+    //   domain: 'localhost',
+    //   path: '/',
+    //   httpOnly: false,
+    // };
   }
 
   /**
@@ -78,7 +78,7 @@ export class AuthService {
       refreshToken: token,
       domain: 'localhost',
       path: '/',
-      httpOnly: false,
+      httpOnly: true,
     };
   }
 

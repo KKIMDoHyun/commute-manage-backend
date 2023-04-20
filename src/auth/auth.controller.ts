@@ -41,20 +41,25 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserSignInOutputDto> {
     const user = req.user;
-    const { accessToken, ...accessOption } =
-      await this.authService.getCookieWithJwtAccessToken(user.id);
-
+    // const { accessToken, ...accessOption } =
+    //   await this.authService.getCookieWithJwtAccessToken(user.id);
+    const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
+      user.id,
+    );
     const { refreshToken, ...refreshOption } =
       await this.authService.getCookieWithJwtRefreshToken(user.id);
 
     await this.authService.setCurrentRefreshToken(refreshToken, user.id);
-    res.cookie('Authentication', accessToken, accessOption);
+    // res.cookie('Authentication', accessToken, accessOption);
     res.cookie('Refresh', refreshToken, refreshOption);
-    res.cookie('isMaster', user.isMaster);
+    // res.cookie('isMaster', user.isMaster, {
+    //   domain: 'localhost',
+    //   path: '/',
+    //   httpOnly: true,
+    // });
 
     return {
       accessToken,
-      id: user.id,
     };
   }
 
@@ -63,9 +68,12 @@ export class AuthController {
   @Get('/refresh')
   async refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
     const user = req.user;
-    const { accessToken, ...accessOption } =
-      await this.authService.getCookieWithJwtAccessToken(user.id);
-    res.cookie('Authentication', accessToken, accessOption);
+    // const { accessToken, ...accessOption } =
+    //   await this.authService.getCookieWithJwtAccessToken(user.id);
+    const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
+      user.id,
+    );
+    // res.cookie('Authentication', accessToken, accessOption);
     return accessToken;
   }
 }
