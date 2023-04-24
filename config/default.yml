@@ -7,5 +7,5 @@ db:
   database: 'commute_manage'
 
 jwt:
-  accessToken_expiresIn: 3600
+  accessToken_expiresIn: 18000
   refreshToken_expiresIn: 604800
