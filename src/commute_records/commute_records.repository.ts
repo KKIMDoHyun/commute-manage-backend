@@ -98,10 +98,8 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     user: User,
   ): Promise<string> {
     const { id, arrive_time, is_am } = recentRecord;
-    console.log(recentRecord);
     const addAmWorkTime = is_am ? 240 : 0;
     const addPmWorkTime = isPm ? 240 : 0;
-    console.log(isPm);
     await this.commuteRecordRepository
       .createQueryBuilder()
       .update(CommuteRecord)
@@ -159,10 +157,6 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
   }
 
   async getCommuteRecordsOfWeek(mondayDate: Dayjs, user: User) {
-    console.log(
-      dayjs(mondayDate).startOf('d').format(),
-      dayjs(mondayDate).add(5, 'd').endOf('d').format(),
-    );
     const records = await this.commuteRecordRepository.find({
       order: {
         created_at: 'ASC',
@@ -175,7 +169,6 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
         user: user.id,
       },
     });
-    console.log(records);
     return records;
   }
 

@@ -1,21 +1,12 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Query,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Patch, Query, UseFilters } from '@nestjs/common';
 import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { Dayjs } from 'dayjs';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entity/user.entity';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('commute-records')
-@UseGuards(JwtAuthGuard)
 export class CommuteRecordsController {
   constructor(private commuteRecordsService: CommuteRecordsService) {}
 

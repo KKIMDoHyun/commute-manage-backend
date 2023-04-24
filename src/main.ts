@@ -14,8 +14,8 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
-  const reflector = new Reflector();
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // const reflector = new Reflector();
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.use(cookieParser());
 
   const serverConfig = config.get('server');

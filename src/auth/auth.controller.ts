@@ -3,13 +3,12 @@ import {
   Controller,
   HttpCode,
   Post,
-  Get,
   Res,
   Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/auth/decorators/public-decorator';
@@ -66,22 +65,20 @@ export class AuthController {
 
   @Public()
   @UseGuards(JwtRefreshGuard)
-  @Get('/refresh')
+  @Post('/refresh')
   async refresh(
     @Req() req: RequestWithUser,
-    // @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     const user = req.user;
-
     const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
-    // [Access Token 재발급 시 Refresh Token 재발급]
-    // const { refreshToken, ...refreshOption } =
-    //   await this.authService.getCookieWithJwtRefreshToken(user.id);
+    const { refreshToken, ...refreshOption } =
+      await this.authService.getCookieWithJwtRefreshToken(user.id);
 
-    // await this.authService.setCurrentRefreshToken(refreshToken, user.id);
-    // res.cookie('Refresh', refreshToken, refreshOption);
+    await this.authService.setCurrentRefreshToken(refreshToken, user.id);
+    res.cookie('Refresh', refreshToken, refreshOption);
     return {
       accessToken,
       isMaster: user.isMaster,
