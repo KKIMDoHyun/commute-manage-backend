@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import config from 'config';
 import { HttpExceptionFilter } from 'src/ExceptionFilter/httpExceptionFilter';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,8 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
+  const reflector = new Reflector();
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.use(cookieParser());
 
   const serverConfig = config.get('server');

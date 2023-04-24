@@ -72,9 +72,11 @@ export class AuthController {
     // @Res({ passthrough: true }) res: Response,
   ) {
     const user = req.user;
+
     const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
+    // [Access Token 재발급 시 Refresh Token 재발급]
     // const { refreshToken, ...refreshOption } =
     //   await this.authService.getCookieWithJwtRefreshToken(user.id);
 

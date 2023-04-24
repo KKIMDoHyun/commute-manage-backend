@@ -35,6 +35,10 @@ export class AuthService {
     }
   }
 
+  /**
+   * [로그인 시]
+   * 유저가 DB에 있는지 인증 단계
+   */
   async validateUser(userSignInInputDto: UserSignInInputDto): Promise<any> {
     const { email, password } = userSignInInputDto;
     const user = await this.authRepository.findUserByEmail(email);
@@ -42,13 +46,12 @@ export class AuthService {
       const { password, ...result } = user;
       return result;
     } else {
-      throw new UnauthorizedException(
-        '아이디 또는 비밀번호를 잘못 입력했습니다!',
-      );
+      throw new ForbiddenException('아이디 또는 비밀번호를 잘못 입력했습니다!');
     }
   }
 
   /**
+   * [로그인 시]
    * AccessToken 발급 후 쿠키 정보와 함께 반환
    */
   async getCookieWithJwtAccessToken(id: number) {
@@ -61,6 +64,7 @@ export class AuthService {
   }
 
   /**
+   * [로그인 시]
    * refreshToken 발급 후 쿠키 정보와 함께 반환
    */
   async getCookieWithJwtRefreshToken(id: number) {
@@ -78,6 +82,7 @@ export class AuthService {
   }
 
   /**
+   * [로그인 시]
    * 발급받은 refreshToken을 암호화하여 DB에 저장
    */
   async setCurrentRefreshToken(refreshToken: string, id: number) {
@@ -88,17 +93,14 @@ export class AuthService {
   }
 
   /**
+   * [Access Token 재발급 시]
    * 유저의 id를 이용하여 유저를 조회하고 refreshToken이 유효한지 확인
    */
   async getUserIfRefreshTokenMatches(
     refreshToken: string,
     id: number,
   ): Promise<User | { user: User; auth: boolean }> {
-    console.log('RE', refreshToken);
     const user = await this.authRepository.findUserById(id);
-    if (!refreshToken) {
-      return { user: user, auth: false };
-    }
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
       user.currentHashedRefreshToken,
@@ -110,7 +112,8 @@ export class AuthService {
   }
 
   /**
-   * 로그아웃 시 토큰 반환
+   * [로그아웃 시]
+   * 토큰 만료시간 없앰
    */
   getCookiesForLogOut() {
     return {

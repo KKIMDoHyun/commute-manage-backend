@@ -19,30 +19,39 @@ export class TeamRepository extends Repository<Team> {
   }
 
   async getTeamMembers(user: User) {
+    const t = await this.teamRepository.query(`
+    SELECT u.id, u.name, u.email, u.isMaster, t.id AS team_id, t.name AS team_name, t.parentId AS team_parentId
+    FROM team AS t
+    INNER JOIN user as u
+    ON u.user_team_id = t.id
+    `);
+    console.log(t);
     const teams = await this.teamRepository.manager
       .getTreeRepository(Team)
       .findDescendants(user.team, { relations: ['user'] });
-    const filteredTeam = teams.filter((v) => v.name !== user.team.name);
-
-    const subTeams = filteredTeam.map((team) => {
-      return {
-        id: team.id,
-        name: team.name,
-        user: team.user
-          .map((user) => {
-            return {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              isMaster: user.isMaster,
-            };
-          })
-          .sort((a, b) =>
-            a.isMaster === b.isMaster ? 0 : a.isMaster ? -1 : 1,
-          ),
-      };
-    });
-    return { id: teams[0].id, name: teams[0].name, subTeams };
+    console.log(teams);
+    return teams;
+    // const filteredTeam = teams.filter((v) => v.name !== user.team.name);
+    // const subTeams = filteredTeam.map((team) => {
+    //   return {
+    //     id: team.id,
+    //     name: team.name,
+    //     pId: user.team.id,
+    //     user: team.user
+    //       .map((user) => {
+    //         return {
+    //           id: user.id,
+    //           name: user.name,
+    //           email: user.email,
+    //           isMaster: user.isMaster,
+    //         };
+    //       })
+    //       .sort((a, b) =>
+    //         a.isMaster === b.isMaster ? 0 : a.isMaster ? -1 : 1,
+    //       ),
+    //   };
+    // });
+    // return { id: teams[0].id, name: teams[0].name, subTeams };
   }
 
   async createTeam() {
