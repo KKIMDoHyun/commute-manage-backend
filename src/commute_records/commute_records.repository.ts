@@ -10,6 +10,21 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
   @InjectRepository(CommuteRecord)
   private readonly commuteRecordRepository: Repository<CommuteRecord>;
 
+  async createTodayRecordRow(user: User): Promise<void> {
+    const todayRecord = await this.commuteRecordRepository.findOne({
+      where: {
+        user: user.id,
+        today_date: dayjs().format('YYYY-MM-DD'),
+      },
+    });
+    if (todayRecord === undefined) {
+      await this.commuteRecordRepository.insert({
+        user: user,
+        today_date: dayjs().format('YYYY-MM-DD'),
+      });
+    }
+  }
+
   async getRecentCommuteRecords(user: User): Promise<CommuteRecord[]> {
     const records = await this.commuteRecordRepository.find({
       where: {
@@ -171,13 +186,6 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     });
     return records;
   }
-
-  // async addTodyRecord(user: User) {
-  //   // 해당 유저의 마지막 기록을 가져온다.
-  //   const recentRecord =
-  //     // 마지막 기록의 날짜가 오늘이 아니라면 오늘 기록을 추가해준다.
-  //     await this.commuteRecordRepository.insert();
-  // }
 
   async insertAutoRecord(userValues): Promise<void> {
     await this.commuteRecordRepository

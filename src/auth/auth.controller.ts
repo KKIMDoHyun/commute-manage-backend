@@ -17,10 +17,14 @@ import { UserSignUpInputDto } from 'src/auth/dto/user-signUp.input.dto';
 import { JwtRefreshGuard } from 'src/auth/guards/jwt-refresh.guard';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { RequestWithUser } from 'src/auth/type/requestWithUser.type';
+import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private commuteRecordsService: CommuteRecordsService,
+  ) {}
 
   @Public()
   @Post('/sign-up')
@@ -40,6 +44,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserSignInOutputDto> {
     const user = req.user;
+    await this.commuteRecordsService.createTodayRecordRow(user);
     const { accessToken } = await this.authService.getCookieWithJwtAccessToken(
       user.id,
     );

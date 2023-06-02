@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   ForbiddenException,
+  Inject,
   Injectable,
+  forwardRef,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRepository } from 'src/auth/auth.repository';
@@ -11,6 +13,7 @@ import * as bcrypt from 'bcryptjs';
 import { User } from 'src/auth/entity/user.entity';
 import config = require('config');
 import { UserRepository } from 'src/user/user.repository';
+import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 
 @Injectable()
 export class AuthService {

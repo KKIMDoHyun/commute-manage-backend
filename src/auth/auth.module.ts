@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +11,9 @@ import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { LocalStrategy } from 'src/auth/strategies/local.strategy';
 import { JwtRefreshStrategy } from 'src/auth/strategies/jwt-refresh.strategy';
+import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
+import { CommuteRecordsModule } from 'src/commute_records/commute_records.module';
+import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 
 const jwtConfig = config.get('jwt');
 @Module({
@@ -26,6 +29,7 @@ const jwtConfig = config.get('jwt');
     }),
     TypeOrmModule.forFeature([User]),
     UserModule,
+    forwardRef(() => CommuteRecordsModule),
   ],
   controllers: [AuthController],
   providers: [

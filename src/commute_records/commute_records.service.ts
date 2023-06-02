@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 import { CommuteRecordDto } from 'src/commute_records/dto/get-commute_record.dto';
 import dayjs, { Dayjs } from 'dayjs';
@@ -8,10 +13,15 @@ import { AuthRepository } from 'src/auth/auth.repository';
 @Injectable()
 export class CommuteRecordsService {
   constructor(
+    @Inject(forwardRef(() => AuthRepository))
     private readonly authRepository: AuthRepository,
     private readonly commuteRecordsRepository: CommuteRecordsRepository,
   ) {}
 
+  async createTodayRecordRow(user: User): Promise<void> {
+    console.log(user);
+    return await this.commuteRecordsRepository.createTodayRecordRow(user);
+  }
   /**
    * 최근 7일 간의 기록 가져오기
    */
@@ -140,12 +150,5 @@ export class CommuteRecordsService {
       return { today_date: dayjs().format('YYYY-MM-DD'), user: v.id };
     });
     return this.commuteRecordsRepository.insertAutoRecord(userValues);
-  }
-
-  /**
-   * [로그인 시 당일 기록 없으면 추가]
-   */
-  async addTodyRecord(user: User) {
-    // return this.commuteRecordsRepository.addTodyRecord();
   }
 }
