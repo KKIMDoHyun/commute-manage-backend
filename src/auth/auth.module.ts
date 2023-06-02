@@ -11,9 +11,7 @@ import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { LocalStrategy } from 'src/auth/strategies/local.strategy';
 import { JwtRefreshStrategy } from 'src/auth/strategies/jwt-refresh.strategy';
-import { CommuteRecordsService } from 'src/commute_records/commute_records.service';
 import { CommuteRecordsModule } from 'src/commute_records/commute_records.module';
-import { CommuteRecordsRepository } from 'src/commute_records/commute_records.repository';
 
 const jwtConfig = config.get('jwt');
 @Module({
