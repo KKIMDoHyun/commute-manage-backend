@@ -141,4 +141,11 @@ export class CommuteRecordsService {
     });
     return this.commuteRecordsRepository.insertAutoRecord(userValues);
   }
+
+  /**
+   * [로그인 시 당일 기록 없으면 추가]
+   */
+  async addTodyRecord(user: User) {
+    // return this.commuteRecordsRepository.addTodyRecord();
+  }
 }

@@ -172,6 +172,13 @@ export class CommuteRecordsRepository extends Repository<CommuteRecord> {
     return records;
   }
 
+  // async addTodyRecord(user: User) {
+  //   // 해당 유저의 마지막 기록을 가져온다.
+  //   const recentRecord =
+  //     // 마지막 기록의 날짜가 오늘이 아니라면 오늘 기록을 추가해준다.
+  //     await this.commuteRecordRepository.insert();
+  // }
+
   async insertAutoRecord(userValues): Promise<void> {
     await this.commuteRecordRepository
       .createQueryBuilder()
