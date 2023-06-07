@@ -2,7 +2,6 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import config = require('config');
 
 const dbConfig = config.get('db');
-
 export const typeORMConfig: TypeOrmModuleOptions = {
   type: dbConfig.type,
   host: process.env.RDS_HOSTNAME || dbConfig.host,

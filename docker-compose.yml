@@ -1,0 +1,44 @@
+version: '3'
+services:
+  nest-mysql:
+    image: mysql:latest
+    container_name: nest-mysql
+    restart: always
+    ports:
+      - 3305:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rlaehgus1
+      MYSQL_DATABASE: 'commute_manage'
+      TZ: Asia/Seoul
+    networks:
+      - commute_network
+    # volumes:
+    #   - shared-data:/var/lib/mysql
+  back-server:
+    image: commute-server-image
+    container_name: commute-server-conatiner
+    restart: always
+    links:
+      - nest-mysql
+    ports:
+      - 3000:3000
+    # volumes:
+    #   - shared-data:/var/lib/mysql
+    networks:
+      - commute_network
+    command:
+      [
+        'dockerize',
+        '-wait',
+        'tcp://nest-mysql:3306',
+        '-timeout',
+        '120s',
+        'yarn',
+        'start-nodemon',
+      ]
+
+networks:
+  commute_network:
+# volumes:
+#   shared-data:
+#     external: true
